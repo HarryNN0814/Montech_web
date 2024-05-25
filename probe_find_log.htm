@@ -1,0 +1,943 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/mystyle.css">
+    <title>Số Liệu Bồn Theo Khung Thời Gian</title>
+    <script src="/myscripts.js"></script>
+    <script>
+        var PAGE_PROBE_SETTING = 0;
+        var PAGE_PROBE_FIND_LOG = 1;
+        var PAGE_PROBE_IN_OUT = 2;
+
+        var PROBE_FILE_EDIT = 0;
+        var PROBE_FILE_ADD = 1;
+        var PROBE_FILE_DEL = 2;
+        var PROBE_FILE_READ = 3;
+        var PROBE_FILE_RESET = 4;
+        var PROBE_FILE_RESET_ALL = 5;
+
+        var SALE_SHIFT_1 = 1;
+        var SALE_SHIFT_2 = 2;
+        var SALE_SHIFT_3 = 3;
+
+        var probe_body_find_log = "";
+        var device_name = "";
+        var device_addr = "";
+        var page_current = PAGE_PROBE_FIND_LOG;
+        var current_probe_tank = 1;
+
+        var json_setting_page;
+        var json_find_log_page;
+        var json_in_out_page;
+
+        var sale_shift1_fuel_a92_out = 0,
+            sale_shift1_fuel_a95_III_out = 0,
+            sale_shift1_fuel_a95_IV_out = 0,
+            sale_shift1_fuel_e5_out = 0,
+            sale_shift1_fuel_do_out = 0,
+            sale_shift1_fuel_do_II_out = 0,
+            sale_shift1_fuel_ko_out = 0,
+            sale_shift1_fuel_do_V_out = 0;
+
+        var sale_shift1_fuel_a92_in = 0,
+            sale_shift1_fuel_a95_III_in = 0,
+            sale_shift1_fuel_a95_IV_in = 0,
+            sale_shift1_fuel_e5_in = 0,
+            sale_shift1_fuel_do_in = 0,
+            sale_shift1_fuel_do_II_in = 0,
+            sale_shift1_fuel_ko_in = 0,
+            sale_shift1_fuel_do_V_in = 0;
+
+        var sale_shift2_fuel_a92_out = 0,
+            sale_shift2_fuel_a95_III_out = 0,
+            sale_shift2_fuel_a95_IV_out = 0,
+            sale_shift2_fuel_e5_out = 0,
+            sale_shift2_fuel_do_out = 0,
+            sale_shift2_fuel_do_II_out = 0,
+            sale_shift2_fuel_ko_out = 0,
+            sale_shift2_fuel_do_V_out = 0;
+
+        var sale_shift2_fuel_a92_in = 0,
+            sale_shift2_fuel_a95_III_in = 0,
+            sale_shift2_fuel_a95_IV_in = 0,
+            sale_shift2_fuel_e5_in = 0,
+            sale_shift2_fuel_do_in = 0,
+            sale_shift2_fuel_do_II_in = 0,
+            sale_shift2_fuel_ko_in = 0,
+            sale_shift2_fuel_do_V_in = 0;
+
+        var sale_shift3_fuel_a92_out = 0,
+            sale_shift3_fuel_a95_III_out = 0,
+            sale_shift3_fuel_a95_IV_out = 0,
+            sale_shift3_fuel_e5_out = 0,
+            sale_shift3_fuel_do_out = 0,
+            sale_shift3_fuel_do_II_out = 0,
+            sale_shift3_fuel_ko_out = 0,
+            sale_shift3_fuel_do_V_out = 0;
+
+        var sale_shift3_fuel_a92_in = 0,
+            sale_shift3_fuel_a95_III_in = 0,
+            sale_shift3_fuel_a95_IV_in = 0,
+            sale_shift3_fuel_e5_in = 0,
+            sale_shift3_fuel_do_in = 0,
+            sale_shift3_fuel_do_II_in = 0,
+            sale_shift3_fuel_ko_in = 0,
+            sale_shift3_fuel_do_V_in = 0;
+
+        var fuel_a92 = 0,
+            fuel_a95_III = 0,
+            fuel_a95_IV = 0,
+            fuel_e5 = 0,
+            fuel_do = 0,
+            fuel_do_II = 0,
+            fuel_do_V = 0,
+            fuel_ko = 0;
+
+        var tt_sale_shift_display_enable = 0;
+
+        var probe_fuel_num = 0;
+
+        var delete_log_confirm_cnt = 0;
+        var timeout_delete_log = setTimeout(function() {
+            delete_log_confirm_cnt = 0;
+        }, 3000);
+
+        var sale_shift_header = "<tr>\
+                    <th rowspan=\"2\" class=\"thcGray\">Bồn</th>\
+                    <th rowspan=\"2\" class=\"thcGray\">Nhiên Liệu</th>\
+                    <th colspan=\"2\" class=\"thcGray\">Mức Nhiên Liệu Đầu</th>\
+                    <th colspan=\"2\" class=\"thcGray\">Mức Nhiên Liệu Cuối</th>\
+                    <th rowspan=\"2\" class=\"thcGray\">Số Lượng Xuất (Lít)</th>\
+                    <th rowspan=\"2\" class=\"thcGray\">Số Lượng Nhập (Lít)</th>\
+                    <th rowspan=\"2\" class=\"thcGray\">Tải Về</th>\
+                    </tr>\
+                    <tr>\
+                        <th class=\"thcGray\">mm</th>\
+                        <th class=\"thcGray\">Lít</th>\
+                        <th class=\"thcGray\">mm</th>\
+                        <th class=\"thcGray\">Lít</th>\
+                    </tr>";
+
+        var sale_shift_tr = "<tr>\
+					<td>-</td>\
+					<td onclick='probe_log_delete(this, {sale_shift});'>-</td>\
+					<td>-</td>\
+                    <td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+                    <td style=\"color: #11C7DA;\" onclick='probe_log_download(this, {sale_shift});'><b>></b></td>\
+					</tr>";
+
+        var sale_shift_total = "<tr>\
+					<td colspan=\"6\" style=\"text-align: left; padding-left: 5;\">-</td>\
+					<td>-</td>\
+					<td>-</td>\
+                    <td></td>\
+					</tr>";
+
+        var sale_shift_tr_space = "<tr>\
+                <td colspan=\"9\" class=\"{border}\" style=\"text-align: left;padding-left: 0;padding-bottom: 5; color: {color};\">\
+                <u><b>{text}</b></u>\
+                </td></tr>";
+
+        function home_page() {
+            window.location = "/home.htm";
+        }
+
+        function probe_in_out_page() {
+            window.location = "/probe_in_out.htm";
+        }
+
+        function probe_setting_page() {
+            window.location = "/probe_setting.htm";
+        }
+
+        function probe_find_time_setting_page() {
+            window.location = "/probe_find_time_setting.htm";
+        }
+
+        function probe_find_log_fuel_num_case(obj) {
+            var num = 0;
+            var length = obj.sale_shift.length;
+
+            fuel_a92 = 0;
+            fuel_a95_III = 0;
+            fuel_a95_IV = 0;
+            fuel_e5 = 0;
+            fuel_do = 0;
+            fuel_do_II = 0;
+            fuel_do_V = 0;
+            fuel_ko = 0;
+
+            for (var i = 0; i < length; ++i) {
+                var p_oil = obj.sale_shift[i].C2;
+                if (0 == p_oil) {
+                    if (0 == fuel_a92) {
+                        fuel_a92 = 1;
+                        num++;
+                    }
+                } else if (1 == p_oil) {
+                    if (0 == fuel_a95_III) {
+                        fuel_a95_III = 1;
+                        num++;
+                    }
+                } else if (2 == p_oil) {
+                    if (0 == fuel_a95_IV) {
+                        fuel_a95_IV = 1;
+                        num++;
+                    }
+                } else if (3 == p_oil) {
+                    if (0 == fuel_e5) {
+                        fuel_e5 = 1;
+                        num++;
+                    }
+                } else if (4 == p_oil) {
+                    if (0 == fuel_do) {
+                        fuel_do = 1;
+                        num++;
+                    }
+                } else if (5 == p_oil) {
+                    if (0 == fuel_do_II) {
+                        fuel_do_II = 1;
+                        num++;
+                    }
+                } else if (6 == p_oil) {
+                    if (0 == fuel_ko) {
+                        fuel_ko = 1;
+                        num++;
+                    }
+                } else if (7 == p_oil) {
+                    if (0 == fuel_do_V) {
+                        fuel_do_V = 1;
+                        num++;
+                    }
+                }
+            }
+
+            console.log("tt_num " + num);
+            return num;
+        }
+
+        function probe_log_download(element, sale_shift) {
+            var sale_shift_table = "sale_shift" + sale_shift;
+            var table = document.getElementById(sale_shift_table);
+            var row = element.parentNode.rowIndex;
+            var tank = table.rows[row].cells[0].innerHTML;
+            var answer = confirm("Xác nhận tải LOG que đo " + tank);
+            if (!answer) return;
+
+            var probe_log = "probe_";
+            probe_log += add_1zero_number(tank);
+
+            probe_log += ".csv";
+            console.log(probe_log);
+            window.open("/edit_sdfs?download=/" + probe_log);
+        }
+
+        function probe_log_delete(element, sale_shift) {
+            clearTimeout(timeout_delete_log);
+            timeout_delete_log = setTimeout(function() {
+                delete_log_confirm_cnt = 0;
+            }, 3000);
+            if (++delete_log_confirm_cnt == 3) {
+                delete_log_confirm_cnt = 0;
+                var sale_shift_table = "sale_shift" + sale_shift;
+                var table = document.getElementById(sale_shift_table);
+                var row = element.parentNode.rowIndex;
+                var tank = table.rows[row].cells[0].innerHTML;
+                var answer = confirm("Xác nhận xoá LOG que đo " + tank);
+                if (!answer) return;
+
+                var probe_log = "probe_";
+                probe_log += add_1zero_number(tank);
+
+                probe_log += ".csv";
+                console.log(probe_log);
+
+                client.delect('/edit_sdfs', "path=/" + probe_log, function(response) {
+                    var obj = {
+                        "tank": 1
+                    };
+                    obj.tank = Number(tank);
+                    var StrJSON = JSON.stringify(obj);
+                    console.log(StrJSON);
+                    client.post('/post', "probe_log_remove=" + StrJSON, function(response) {
+                        console.log(response);
+                        alert("Xóa LOG que đo " + tank + " OK");
+                    });
+                });
+            }
+        }
+
+        function probe_find_log_time_sale_shift(sale_shift) {
+            var table;
+            if (SALE_SHIFT_1 == sale_shift) {
+                table = document.getElementById('sale_shift_time1');
+            } else if (SALE_SHIFT_2 == sale_shift) {
+                table = document.getElementById('sale_shift_time2');
+            } else {
+                table = document.getElementById('sale_shift_time3');
+            }
+            var d_start = Number(table.rows[1].cells[1].children[0].value);
+            var d_stop = Number(table.rows[1].cells[3].children[0].value);
+            var t_start = Number(table.rows[1].cells[2].children[0].value);
+            var t_stop = Number(table.rows[1].cells[4].children[0].value);
+            probe_find_log_request(sale_shift, d_start, d_stop, t_start, t_stop);
+        }
+
+        function probe_find_log_total_page_make(tt_num) {
+            var row_space = sale_shift_tr_space;
+            row_space = row_space.replace(/{text}/g, "");
+            row_space = row_space.replace(/{border}/g, "lB rB");
+            row_space = row_space.replace(/{color}/g, "#ffffff");
+
+            var row_tt = sale_shift_tr_space;
+            row_tt = row_tt.replace(/{text}/g, "TỔNG SỐ LƯỢNG TRẠM");
+            row_tt = row_tt.replace(/{border}/g, "lB rB tB");
+            row_tt = row_tt.replace(/{color}/g, "#ff5722");
+
+            var table_sale_shift_total = "";
+            table_sale_shift_total += row_space;
+            table_sale_shift_total += row_tt;
+            for (var i = 0; i < tt_num; ++i) {
+                table_sale_shift_total += sale_shift_total;
+            }
+
+            return table_sale_shift_total;
+        }
+
+        function probe_find_log_page_display(sale_shift_table, obj) {
+            var tt_fuel_a92_out = 0,
+                tt_fuel_a95_III_out = 0,
+                tt_fuel_a95_IV_out = 0,
+                t_fuel_e5_out = 0,
+                tt_fuel_do_out = 0,
+                tt_fuel_do_II_out = 0,
+                tt_fuel_ko_out = 0,
+                tt_fuel_do_V_out = 0;
+
+            var tt_fuel_a92_in = 0,
+                tt_fuel_a95_III_in = 0,
+                tt_fuel_a95_IV_in = 0,
+                t_fuel_e5_in = 0,
+                tt_fuel_do_in = 0,
+                tt_fuel_do_II_in = 0,
+                tt_fuel_ko_in = 0,
+                tt_fuel_do_V_in = 0;
+
+            fuel_a92 = 0;
+            fuel_a95_III = 0;
+            fuel_a95_IV = 0;
+            fuel_e5 = 0;
+            fuel_do = 0;
+            fuel_do_II = 0;
+            fuel_do_V = 0;
+            fuel_ko = 0;
+
+            var table;
+            if (SALE_SHIFT_1 == sale_shift_table) {
+                table = document.getElementById('sale_shift1');
+            } else if (SALE_SHIFT_2 == sale_shift_table) {
+                table = document.getElementById('sale_shift2');
+            } else {
+                table = document.getElementById('sale_shift3');
+            }
+
+            /* Display probe sale shift 
+                [sale_shift] C1: Bồn, C2: Nhiên liệu, C3: mm nhiên liệu đầu, C4: Lít nhiên liệu đầu, 
+                C5: mm nhiên liệu cuối, C6: Lít nhiên liệu cuối
+            */
+            var tank_num = obj.sale_shift.length;
+
+            for (var i = 0; i < tank_num; ++i) {
+                var j = i + 2;
+                table.rows[j].cells[0].innerHTML = obj.sale_shift[i].C1;
+                table.rows[j].cells[2].innerHTML = obj.sale_shift[i].C3;
+                table.rows[j].cells[3].innerHTML = probe_format(Number(obj.sale_shift[i].C4) / 1, "");
+                table.rows[j].cells[4].innerHTML = obj.sale_shift[i].C5;
+                table.rows[j].cells[5].innerHTML = probe_format(Number(obj.sale_shift[i].C6) / 1, "");
+
+                var tt_fuel_out = obj.sale_shift[i].C7;
+                var tt_fuel_in = obj.sale_shift[i].C8;
+                table.rows[j].cells[6].innerHTML = probe_format(Number(obj.sale_shift[i].C7) / 1, "");
+                table.rows[j].cells[7].innerHTML = probe_format(Number(obj.sale_shift[i].C8) / 1, "");
+
+                var fuel = obj.sale_shift[i].C2;
+                if (fuel == 0) {
+                    fuel_a92++;
+                    tt_fuel_a92_out += tt_fuel_out;
+                    tt_fuel_a92_in += tt_fuel_in;
+                    table.rows[j].cells[1].innerHTML = "A92_II";
+                    table.rows[j].cells[1].className = "cGreen";
+                } else if (fuel == 1) {
+                    fuel_a95_III++;
+                    tt_fuel_a95_III_out += tt_fuel_out;
+                    tt_fuel_a95_III_in += tt_fuel_in;
+                    table.rows[j].cells[1].innerHTML = "A95_III";
+                    table.rows[j].cells[1].className = "cBlue";
+                } else if (fuel == 2) {
+                    fuel_a95_IV++;
+                    tt_fuel_a95_IV_out += tt_fuel_out;
+                    tt_fuel_a95_IV_in += tt_fuel_in;
+                    table.rows[j].cells[1].innerHTML = "A95_IV";
+                    table.rows[j].cells[1].className = "cBlue";
+                } else if (fuel == 3) {
+                    fuel_e5++;
+                    t_fuel_e5_out += tt_fuel_out;
+                    t_fuel_e5_in += tt_fuel_in;
+                    table.rows[j].cells[1].innerHTML = "E5";
+                    table.rows[j].cells[1].className = "cXanhLo";
+                } else if (fuel == 4) {
+                    fuel_do++;
+                    tt_fuel_do_out += tt_fuel_out;
+                    tt_fuel_do_in += tt_fuel_in;
+                    table.rows[j].cells[1].innerHTML = "DO";
+                    table.rows[j].cells[1].className = "cOrange";
+                } else if (fuel == 5) {
+                    fuel_do_II++;
+                    tt_fuel_do_II_out += tt_fuel_out;
+                    tt_fuel_do_II_in += tt_fuel_in;
+                    table.rows[j].cells[1].innerHTML = "DO_II";
+                    table.rows[j].cells[1].className = "cOrange";
+                } else if (fuel == 6) {
+                    fuel_ko++;
+                    tt_fuel_ko_out += tt_fuel_out;
+                    tt_fuel_ko_in += tt_fuel_in;
+                    table.rows[j].cells[1].innerHTML = "KO";
+                    table.rows[j].cells[1].className = "cTim";
+                } else if (fuel == 7) {
+                    fuel_do_V++;
+                    tt_fuel_do_V_out += tt_fuel_out;
+                    tt_fuel_do_V_in += tt_fuel_in;
+                    table.rows[j].cells[1].innerHTML = "DO_V";
+                    table.rows[j].cells[1].className = "cOrange";
+                } else {
+                    table.rows[j].cells[1].innerHTML = "Fail";
+                    table.rows[j].cells[1].className = "cBlack";
+                }
+            }
+
+            if (SALE_SHIFT_1 == sale_shift_table) {
+                sale_shift1_fuel_a92_out = tt_fuel_a92_out;
+                sale_shift1_fuel_a95_III_out = tt_fuel_a95_III_out;
+                sale_shift1_fuel_a95_IV_out = tt_fuel_a95_IV_out;
+                sale_shift1_fuel_e5_out = t_fuel_e5_out;
+                sale_shift1_fuel_do_out = tt_fuel_do_out;
+                sale_shift1_fuel_do_II_out = tt_fuel_do_II_out;
+                sale_shift1_fuel_ko_out = tt_fuel_ko_out;
+                sale_shift1_fuel_do_V_out = tt_fuel_do_V_out;
+
+                sale_shift1_fuel_a92_in = tt_fuel_a92_in;
+                sale_shift1_fuel_a95_III_in = tt_fuel_a95_III_in;
+                sale_shift1_fuel_a95_IV_in = tt_fuel_a95_IV_in;
+                sale_shift1_fuel_e5_in = t_fuel_e5_in;
+                sale_shift1_fuel_do_in = tt_fuel_do_in;
+                sale_shift1_fuel_do_II_in = tt_fuel_do_II_in;
+                sale_shift1_fuel_ko_in = tt_fuel_ko_in;
+                sale_shift1_fuel_do_V_in = tt_fuel_do_V_in;
+            } else if (SALE_SHIFT_2 == sale_shift_table) {
+                sale_shift2_fuel_a92_out = tt_fuel_a92_out;
+                sale_shift2_fuel_a95_III_out = tt_fuel_a95_III_out;
+                sale_shift2_fuel_a95_IV_out = tt_fuel_a95_IV_out;
+                sale_shift2_fuel_e5_out = t_fuel_e5_out;
+                sale_shift2_fuel_do_out = tt_fuel_do_out;
+                sale_shift2_fuel_do_II_out = tt_fuel_do_II_out;
+                sale_shift2_fuel_ko_out = tt_fuel_ko_out;
+                sale_shift2_fuel_do_V_out = tt_fuel_do_V_out;
+
+                sale_shift2_fuel_a92_in = tt_fuel_a92_in;
+                sale_shift2_fuel_a95_III_in = tt_fuel_a95_III_in;
+                sale_shift2_fuel_a95_IV_in = tt_fuel_a95_IV_in;
+                sale_shift2_fuel_e5_in = t_fuel_e5_in;
+                sale_shift2_fuel_do_in = tt_fuel_do_in;
+                sale_shift2_fuel_do_II_in = tt_fuel_do_II_in;
+                sale_shift2_fuel_ko_in = tt_fuel_ko_in;
+                sale_shift2_fuel_do_V_in = tt_fuel_do_V_in;
+            } else if (SALE_SHIFT_3 == sale_shift_table) {
+                sale_shift3_fuel_a92_out = tt_fuel_a92_out;
+                sale_shift3_fuel_a95_III_out = tt_fuel_a95_III_out;
+                sale_shift3_fuel_a95_IV_out = tt_fuel_a95_IV_out;
+                sale_shift3_fuel_e5_out = t_fuel_e5_out;
+                sale_shift3_fuel_do_out = tt_fuel_do_out;
+                sale_shift3_fuel_do_II_out = tt_fuel_do_II_out;
+                sale_shift3_fuel_ko_out = tt_fuel_ko_out;
+                sale_shift3_fuel_do_V_out = tt_fuel_do_V_out;
+
+                sale_shift3_fuel_a92_in = tt_fuel_a92_in;
+                sale_shift3_fuel_a95_III_in = tt_fuel_a95_III_in;
+                sale_shift3_fuel_a95_IV_in = tt_fuel_a95_IV_in;
+                sale_shift3_fuel_e5_in = t_fuel_e5_in;
+                sale_shift3_fuel_do_in = tt_fuel_do_in;
+                sale_shift3_fuel_do_II_in = tt_fuel_do_II_in;
+                sale_shift3_fuel_ko_in = tt_fuel_ko_in;
+                sale_shift3_fuel_do_V_in = tt_fuel_do_V_in;
+            }
+
+            /* Display total sale shift */
+            var row_offset = tank_num;
+            if (fuel_a92 != 0) {
+                var r = row_offset + 2;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng A92_II:";
+                table.rows[r].cells[0].className = "cGreen";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_fuel_a92_out / 1, "");
+                table.rows[r].cells[1].className = "cGreen";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_fuel_a92_in / 1, "");
+                table.rows[r].cells[2].className = "cGreen";
+            }
+
+            if (fuel_a95_III != 0) {
+                var r = row_offset + 2;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng A95_III:";
+                table.rows[r].cells[0].className = "cBlue";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_fuel_a95_III_out / 1, "");
+                table.rows[r].cells[1].className = "cBlue";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_fuel_a95_III_in / 1, "");
+                table.rows[r].cells[2].className = "cBlue";
+            }
+
+            if (fuel_a95_IV != 0) {
+                var r = row_offset + 2;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng A95_IV:";
+                table.rows[r].cells[0].className = "cBlue";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_fuel_a95_IV_out / 1, "");
+                table.rows[r].cells[1].className = "cBlue";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_fuel_a95_IV_in / 1, "");
+                table.rows[r].cells[2].className = "cBlue";
+
+            }
+
+            if (fuel_e5 != 0) {
+                var r = row_offset + 2;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng E5:";
+                table.rows[r].cells[0].className = "cXanhLo";
+
+                table.rows[r].cells[1].innerHTML = probe_format(t_fuel_e5_out / 1, "");
+                table.rows[r].cells[1].className = "cXanhLo";
+
+                table.rows[r].cells[2].innerHTML = probe_format(t_fuel_e5_in / 1, "");
+                table.rows[r].cells[2].className = "cXanhLo";
+
+            }
+
+            if (fuel_do != 0) {
+                var r = row_offset + 2;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng DO:";
+                table.rows[r].cells[0].className = "cOrange";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_fuel_do_out / 1, "");
+                table.rows[r].cells[1].className = "cOrange";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_fuel_do_in / 1, "");
+                table.rows[r].cells[2].className = "cOrange";
+
+            }
+
+            if (fuel_do_II != 0) {
+                var r = row_offset + 2;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng DO_II:";
+                table.rows[r].cells[0].className = "cOrange";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_fuel_do_II_out / 1, "");
+                table.rows[r].cells[1].className = "cOrange";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_fuel_do_II_in / 1, "");
+                table.rows[r].cells[2].className = "cOrange";
+
+            }
+
+            if (fuel_ko != 0) {
+                var r = row_offset + 2;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng KO:";
+                table.rows[r].cells[0].className = "cTim";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_fuel_ko_out / 1, "");
+                table.rows[r].cells[1].className = "cTim";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_fuel_ko_in / 1, "");
+                table.rows[r].cells[2].className = "cTim";
+
+            }
+
+            if (fuel_do_V != 0) {
+                var r = row_offset + 2;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng DO_V:";
+                table.rows[r].cells[0].className = "cOrange";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_fuel_do_V_out / 1, "");
+                table.rows[r].cells[1].className = "cOrange";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_fuel_do_V_in / 1, "");
+                table.rows[r].cells[2].className = "cOrange";
+
+            }
+        }
+
+        /* Display total all sale shift */
+        function probe_find_log_page_sale_shift_total_display() {
+            var table = document.getElementById('sale_shift3');
+            var row_offset = table.rows.length - probe_fuel_num;
+            var tt_sale_shift_fuel_a92_out = sale_shift1_fuel_a92_out + sale_shift2_fuel_a92_out + sale_shift3_fuel_a92_out;
+            var tt_sale_shift_fuel_a95_III_out = sale_shift1_fuel_a95_III_out + sale_shift2_fuel_a95_III_out + sale_shift3_fuel_a95_III_out;
+            var tt_sale_shift_fuel_a95_IV_out = sale_shift1_fuel_a95_IV_out + sale_shift2_fuel_a95_IV_out + sale_shift3_fuel_a95_IV_out;
+            var tt_sale_shift_fuel_e5_out = sale_shift1_fuel_e5_out + sale_shift2_fuel_e5_out + sale_shift3_fuel_e5_out;
+            var tt_sale_shift_fuel_do_out = sale_shift1_fuel_do_out + sale_shift2_fuel_do_out + sale_shift3_fuel_do_out;
+            var tt_sale_shift_fuel_do_II_out = sale_shift1_fuel_do_II_out + sale_shift2_fuel_do_II_out + sale_shift3_fuel_do_II_out;
+            var tt_sale_shift_fuel_ko_out = sale_shift1_fuel_ko_out + sale_shift2_fuel_ko_out + sale_shift3_fuel_ko_out;
+            var tt_sale_shift_fuel_do_V_out = sale_shift1_fuel_do_V_out + sale_shift2_fuel_do_V_out + sale_shift3_fuel_do_V_out;
+
+            var tt_sale_shift_fuel_a92_in = sale_shift1_fuel_a92_in + sale_shift2_fuel_a92_in + sale_shift3_fuel_a92_in;
+            var tt_sale_shift_fuel_a95_III_in = sale_shift1_fuel_a95_III_in + sale_shift2_fuel_a95_III_in + sale_shift3_fuel_a95_III_in;
+            var tt_sale_shift_fuel_a95_IV_in = sale_shift1_fuel_a95_IV_in + sale_shift2_fuel_a95_IV_in + sale_shift3_fuel_a95_IV_in;
+            var tt_sale_shift_fuel_e5_in = sale_shift1_fuel_e5_in + sale_shift2_fuel_e5_in + sale_shift3_fuel_e5_in;
+            var tt_sale_shift_fuel_do_in = sale_shift1_fuel_do_in + sale_shift2_fuel_do_in + sale_shift3_fuel_do_in;
+            var tt_sale_shift_fuel_do_II_in = sale_shift1_fuel_do_II_in + sale_shift2_fuel_do_II_in + sale_shift3_fuel_do_II_in;
+            var tt_sale_shift_fuel_ko_in = sale_shift1_fuel_ko_in + sale_shift2_fuel_ko_in + sale_shift3_fuel_ko_in;
+            var tt_sale_shift_fuel_do_V_in = sale_shift1_fuel_do_V_in + sale_shift2_fuel_do_V_in + sale_shift3_fuel_do_V_in;
+
+            /* Display total sale shift */
+            if (fuel_a92 != 0) {
+                var r = row_offset;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng A92_II:";
+                table.rows[r].cells[0].className = "cGreen";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_sale_shift_fuel_a92_out / 1, "");
+                table.rows[r].cells[1].className = "cGreen";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_sale_shift_fuel_a92_in / 1, "");
+                table.rows[r].cells[2].className = "cGreen";
+            }
+
+            if (fuel_a95_III != 0) {
+                var r = row_offset;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng A95_III:";
+                table.rows[r].cells[0].className = "cBlue";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_sale_shift_fuel_a95_III_out / 1, "");
+                table.rows[r].cells[1].className = "cBlue";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_sale_shift_fuel_a95_III_in / 1, "");
+                table.rows[r].cells[2].className = "cBlue";
+            }
+
+            if (fuel_a95_IV != 0) {
+                var r = row_offset;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng A95_IV:";
+                table.rows[r].cells[0].className = "cBlue";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_sale_shift_fuel_a95_IV_out / 1, "");
+                table.rows[r].cells[1].className = "cBlue";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_sale_shift_fuel_a95_IV_in / 1, "");
+                table.rows[r].cells[2].className = "cBlue";
+
+            }
+
+            if (fuel_e5 != 0) {
+                var r = row_offset;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng E5:";
+                table.rows[r].cells[0].className = "cXanhLo";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_sale_shift_fuel_e5_out / 1, "");
+                table.rows[r].cells[1].className = "cXanhLo";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_sale_shift_fuel_e5_in / 1, "");
+                table.rows[r].cells[2].className = "cXanhLo";
+
+            }
+
+            if (fuel_do != 0) {
+                var r = row_offset;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng DO:";
+                table.rows[r].cells[0].className = "cOrange";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_sale_shift_fuel_do_out / 1, "");
+                table.rows[r].cells[1].className = "cOrange";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_sale_shift_fuel_do_in / 1, "");
+                table.rows[r].cells[2].className = "cOrange";
+
+            }
+
+            if (fuel_do_II != 0) {
+                var r = row_offset;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng DO_II:";
+                table.rows[r].cells[0].className = "cOrange";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_sale_shift_fuel_do_II_out / 1, "");
+                table.rows[r].cells[1].className = "cOrange";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_sale_shift_fuel_do_II_in / 1, "");
+                table.rows[r].cells[2].className = "cOrange";
+
+            }
+
+            if (fuel_ko != 0) {
+                var r = row_offset;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng KO:";
+                table.rows[r].cells[0].className = "cTim";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_sale_shift_fuel_ko_out / 1, "");
+                table.rows[r].cells[1].className = "cTim";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_sale_shift_fuel_ko_in / 1, "");
+                table.rows[r].cells[2].className = "cTim";
+
+            }
+
+            if (fuel_do_V != 0) {
+                var r = row_offset;
+                row_offset++;
+                table.rows[r].cells[0].innerHTML = "Tổng Số Lượng DO_V:";
+                table.rows[r].cells[0].className = "cOrange";
+
+                table.rows[r].cells[1].innerHTML = probe_format(tt_sale_shift_fuel_do_V_out / 1, "");
+                table.rows[r].cells[1].className = "cOrange";
+
+                table.rows[r].cells[2].innerHTML = probe_format(tt_sale_shift_fuel_do_V_in / 1, "");
+                table.rows[r].cells[2].className = "cOrange";
+
+            }
+        }
+
+        function probe_find_log_page_make_table(sale_shift_table, obj) {
+            var table_sale_shift = "";
+            var length = obj.sale_shift.length;
+            console.log("sale_shift Array num " + length);
+            table_sale_shift += sale_shift_header;
+
+            var sale_shift_num = sale_shift_tr;
+            sale_shift_num = sale_shift_num.replace(/{sale_shift}/g, sale_shift_table.toString());
+            for (var i = 0; i < length; ++i) {
+                table_sale_shift += sale_shift_num;
+            }
+
+            probe_fuel_num = probe_find_log_fuel_num_case(obj);
+            for (var i = 0; i < probe_fuel_num; ++i) {
+                table_sale_shift += sale_shift_total;
+            }
+
+            var table;
+            if (SALE_SHIFT_1 == sale_shift_table) {
+                table = document.getElementById('sale_shift1');
+                sale_shift1_fuel_a92_out = 0;
+                sale_shift1_fuel_a95_III_out = 0;
+                sale_shift1_fuel_a95_IV_out = 0;
+                sale_shift1_fuel_e5_out = 0;
+                sale_shift1_fuel_do_out = 0;
+                sale_shift1_fuel_do_II_out = 0;
+                sale_shift1_fuel_ko_out = 0;
+                sale_shift1_fuel_do_V_out = 0;
+
+                sale_shift1_fuel_a92_in = 0;
+                sale_shift1_fuel_a95_III_in = 0;
+                sale_shift1_fuel_a95_IV_in = 0;
+                sale_shift1_fuel_e5_in = 0;
+                sale_shift1_fuel_do_in = 0;
+                sale_shift1_fuel_do_II_in = 0;
+                sale_shift1_fuel_ko_in = 0;
+                sale_shift1_fuel_do_V_in = 0;
+            } else if (SALE_SHIFT_2 == sale_shift_table) {
+                table = document.getElementById('sale_shift2');
+                sale_shift2_fuel_a92_out = 0;
+                sale_shift2_fuel_a95_III_out = 0;
+                sale_shift2_fuel_a95_IV_out = 0;
+                sale_shift2_fuel_e5_out = 0;
+                sale_shift2_fuel_do_out = 0;
+                sale_shift2_fuel_do_II_out = 0;
+                sale_shift2_fuel_ko_out = 0;
+                sale_shift2_fuel_do_V_out = 0;
+
+                sale_shift2_fuel_a92_in = 0;
+                sale_shift2_fuel_a95_III_in = 0;
+                sale_shift2_fuel_a95_IV_in = 0;
+                sale_shift2_fuel_e5_in = 0;
+                sale_shift2_fuel_do_in = 0;
+                sale_shift2_fuel_do_II_in = 0;
+                sale_shift2_fuel_ko_in = 0;
+                sale_shift2_fuel_do_V_in = 0;
+            } else {
+                table = document.getElementById('sale_shift3');
+                table_sale_shift += probe_find_log_total_page_make(probe_fuel_num);
+                sale_shift3_fuel_a92_out = 0;
+                sale_shift3_fuel_a95_III_out = 0;
+                sale_shift3_fuel_a95_IV_out = 0;
+                sale_shift3_fuel_e5_out = 0;
+                sale_shift3_fuel_do_out = 0;
+                sale_shift3_fuel_do_II_out = 0;
+                sale_shift3_fuel_ko_out = 0;
+                sale_shift3_fuel_do_V_out = 0;
+
+                sale_shift3_fuel_a92_in = 0;
+                sale_shift3_fuel_a95_III_in = 0;
+                sale_shift3_fuel_a95_IV_in = 0;
+                sale_shift3_fuel_e5_in = 0;
+                sale_shift3_fuel_do_in = 0;
+                sale_shift3_fuel_do_II_in = 0;
+                sale_shift3_fuel_ko_in = 0;
+                sale_shift3_fuel_do_V_in = 0;
+
+                tt_sale_shift_display_enable = 1;
+            }
+            table.innerHTML = table_sale_shift;
+            probe_find_log_page_display(sale_shift_table, obj);
+            if (tt_sale_shift_display_enable) {
+                probe_find_log_page_sale_shift_total_display();
+            }
+        }
+
+        function probe_find_log_request(sale_shift_table, d_start, d_stop, t_start, t_stop) {
+            var sale_shift_time = '&d_start=' + d_start;
+            sale_shift_time += '&d_stop=' + d_stop;
+            sale_shift_time += '&t_start=' + t_start;
+            sale_shift_time += '&t_stop=' + t_stop;
+            console.log("[" + sale_shift_table + "] " + sale_shift_time);
+            client.get('/get?param_wifi=probe_find_time_in_out_log' + sale_shift_time, function(response) {
+                console.log(response);
+                json_find_log_page = JSON.parse(response);
+                probe_find_log_page_make_table(sale_shift_table, json_find_log_page);
+            });
+        }
+
+        function probe_find_log_fill_time() {
+            client.get('/get?param_wifi=probe_find_time_setting', function(response) {
+                console.log(response);
+                var obj = JSON.parse(response);
+                var t_start1 = obj.t_start1;
+                var t_stop1 = obj.t_stop1;
+                var t_start2 = obj.t_start2;
+                var t_stop2 = obj.t_stop2;
+                var t_start3 = obj.t_start3;
+                var t_stop3 = obj.t_stop3;
+
+                // date start, day stop, time start, time stop
+                //"Fri Jan 26 2018 12:14:52 GMT+0700 (SE Asia Standard Time)"
+                var today = new Date();
+                var yesterday = new Date();
+                var tomorrow = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                //ddmmyy start1
+                var sale_shift_d_start1;
+                if (t_start1 > t_stop1) {
+                    sale_shift_d_start1 = date_ddmmyy_format(yesterday);
+                } else {
+                    sale_shift_d_start1 = date_ddmmyy_format(today);
+                }
+                //hhmmss start1
+                var sale_shift_t_start1 = t_start1;
+
+                //ddmmyy stop1
+                var sale_shift_d_stop1 = date_ddmmyy_format(today);
+                //hhmmss stop1
+                var sale_shift_t_stop1 = t_stop1;
+
+                //ddmmyy start2
+                var sale_shift_d_start2 = date_ddmmyy_format(today);
+                //hhmmss start2
+                var sale_shift_t_start2 = t_start2;
+
+                //ddmmyy stop2
+                var sale_shift_d_stop2 = date_ddmmyy_format(today);
+                //hhmmss stop2
+                var sale_shift_t_stop2 = t_stop2;
+
+                //ddmmyy start3
+                var sale_shift_d_start3 = date_ddmmyy_format(today);
+                //hhmmss start3
+                var sale_shift_t_start3 = t_start3;
+
+                //ddmmyy stop3
+                if (t_start3 > t_stop3) {
+                    sale_shift_d_stop3 = date_ddmmyy_format(tomorrow);
+                } else {
+                    sale_shift_d_stop3 = date_ddmmyy_format(today);
+                }
+                //hhmmss stop3
+                var sale_shift_t_stop3 = t_stop3;
+
+                var table = document.getElementById('sale_shift_time1');
+                table.rows[1].cells[1].children[0].value = add_zero_number(sale_shift_d_start1, 5);
+                table.rows[1].cells[2].children[0].value = add_zero_number(sale_shift_t_start1, 5);
+                table.rows[1].cells[3].children[0].value = add_zero_number(sale_shift_d_stop1, 5);
+                table.rows[1].cells[4].children[0].value = add_zero_number(sale_shift_t_stop1, 5);
+
+                table = document.getElementById('sale_shift_time2');
+                table.rows[1].cells[1].children[0].value = add_zero_number(sale_shift_d_start2, 5);
+                table.rows[1].cells[2].children[0].value = add_zero_number(sale_shift_t_start2, 5);
+                table.rows[1].cells[3].children[0].value = add_zero_number(sale_shift_d_stop2, 5);
+                table.rows[1].cells[4].children[0].value = add_zero_number(sale_shift_t_stop2, 5);
+
+                table = document.getElementById('sale_shift_time3');
+                table.rows[1].cells[1].children[0].value = add_zero_number(sale_shift_d_start3, 5);
+                table.rows[1].cells[2].children[0].value = add_zero_number(sale_shift_t_start3, 5);
+                table.rows[1].cells[3].children[0].value = add_zero_number(sale_shift_d_stop3, 5);
+                table.rows[1].cells[4].children[0].value = add_zero_number(sale_shift_t_stop3, 5);
+
+                probe_find_log_request(SALE_SHIFT_1, sale_shift_d_start1, sale_shift_d_stop1, sale_shift_t_start1, sale_shift_t_stop1);
+
+                probe_find_log_request(SALE_SHIFT_2, sale_shift_d_start2, sale_shift_d_stop2, sale_shift_t_start2, sale_shift_t_stop2);
+
+                probe_find_log_request(SALE_SHIFT_3, sale_shift_d_start3, sale_shift_d_stop3, sale_shift_t_start3, sale_shift_t_stop3);
+            });
+        }
+
+        function onBodyLoad() {
+            client.get('/probe_body_find_log.htm', function(response) {
+                console.log("probe_body_find_log ok");
+                probe_body_find_log = response;
+                client.get('/get?param_wifi=device_info', function(response) {
+                    console.log(response);
+                    var obj = JSON.parse(response);
+                    device_name = obj.name;
+                    device_addr = obj.addr;
+
+                    var BodyHtml = probe_body_find_log;
+                    page_current = PAGE_PROBE_FIND_LOG;
+                    BodyHtml = BodyHtml.replace("{ten}", device_name);
+                    BodyHtml = BodyHtml.replace("{dia chi}", device_addr);
+                    BodyHtml = BodyHtml.replace("{ket noi}", "Chờ kết nối");
+                    BodyHtml = BodyHtml.replace("{color}", "blue");
+                    document.getElementById('Body').innerHTML = BodyHtml;
+                    /* Must be call after generate body html*/
+                    display_time();
+                    probe_connection_status();
+                    probe_find_log_fill_time();
+                });
+            });
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()" id="Body">
+</body>
+
+<script>
+</script>
+
+</html>

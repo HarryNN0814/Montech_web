@@ -1,0 +1,332 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/mystyle.css">
+    <title>Cài Đặt Bồn</title>
+    <script src="/myscripts.js"></script>
+    <script>
+        var PAGE_PROBE_SETTING = 0;
+        var PAGE_PROBE_FIND_LOG = 1;
+        var PAGE_PROBE_IN_OUT = 2;
+
+        var PROBE_FILE_EDIT = 0;
+        var PROBE_FILE_ADD = 1;
+        var PROBE_FILE_DEL = 2;
+        var PROBE_FILE_READ = 3;
+        var PROBE_FILE_RESET = 4;
+        var PROBE_FILE_RESET_ALL = 5;
+
+        var probe_body_setting = "";
+        var device_name = "";
+        var device_addr = "";
+        var page_current = PAGE_PROBE_SETTING;
+        var current_probe_tank = 1;
+
+        var json_setting_page;
+        var json_find_log_page;
+        var json_in_out_page;
+
+        function addMessage(n, m) {
+            var bt_value;
+            var id;
+            if (0 == n) {
+                bt_value = "Upload File ";
+                id = 'barem_button_upload';
+            }
+
+            if (Number(m) > 100) {
+                bt_value += "(Fail)";
+            } else if (Number(m) == 100) {
+                bt_value += "(Done)";
+            } else {
+                bt_value += m + "%";
+            }
+
+            document.getElementById(id).value = bt_value;
+        }
+
+        function startEvents() {
+            var es = new EventSource('/events');
+            es.onopen = function(e) {
+                console.log("Events Opened");
+            };
+            es.onerror = function(e) {
+                if (e.target.readyState != EventSource.OPEN) {
+                    console.log("Events Closed");
+                }
+            };
+            es.onmessage = function(e) {
+                console.log("Event: " + e.data);
+            };
+            es.addEventListener('sdfs', function(e) {
+                addMessage(0, e.data);
+            }, false);
+        }
+
+        function home_page() {
+            window.location = "/home.htm";
+        }
+
+        function probe_find_log_page() {
+            window.location = "/probe_find_log.htm";
+        }
+
+        function probe_addr_setup_page() {
+            window.location = "/probe_addr_setup.htm";
+        }
+
+        function probe_setting_submit() {
+            var pass = prompt("Please Enter Password");
+            if (pass.length < 4) {
+                alert('Password Input Fail');
+                return;
+            }
+            var myJSON = {
+                "command": 1
+            };
+            myJSON.command = PROBE_FILE_EDIT;
+            myJSON.p_tank = Number(document.getElementById("p_tank").value);
+            myJSON.p_oil = Number(document.getElementById("p_oil").value);
+            myJSON.t_volume = Number(document.getElementById("t_volume").value);
+            myJSON.l_fuel_h = Number(document.getElementById("l_fuel_h").value);
+            myJSON.l_fuel_l = Number(document.getElementById("l_fuel_l").value);
+            myJSON.l_water_h = Number(document.getElementById("l_water_h").value);
+            myJSON.l_water_l = 0;
+            myJSON.l_temp_h = Number(document.getElementById("l_temp_h").value);
+            myJSON.l_temp_l = 0;
+            myJSON.t_offset = Number(document.getElementById("t_offset").value);
+            myJSON.t_offset_water = Number(document.getElementById("t_offset_water").value);
+            myJSON.p_addr = Number(document.getElementById("p_addr").value);
+            myJSON.time_update = 600;
+            myJSON.p_enable = Number(document.getElementById("p_enable").checked);
+            myJSON.access_code = pass;
+            var StrJSON = JSON.stringify(myJSON);
+            console.log('Send: ', StrJSON);
+            client.post('/post', "probe_param_setting=" + StrJSON, function(response) {
+                alert(response);
+            });
+        }
+
+        function probe_setting_page_display(obj) {
+            if (0 == obj.status) {
+                alert(obj.mgs);
+                document.getElementById("p_tank").value = current_probe_tank;
+                document.getElementById("p_oil").value = obj.p_oil;
+                document.getElementById("t_volume").value = "";
+                document.getElementById("l_fuel_h").value = "";
+                document.getElementById("l_fuel_l").value = "";
+                document.getElementById("l_water_h").value = "";
+                document.getElementById("l_temp_h").value = "";
+                document.getElementById("t_offset").value = "";
+                document.getElementById("t_offset_water").value = "";
+                document.getElementById("p_addr").value = "";
+                document.getElementById("p_enable").checked = 0;
+            } else {
+                document.getElementById("p_tank").value = current_probe_tank;
+                document.getElementById("p_oil").value = obj.p_oil;
+                document.getElementById("t_volume").value = obj.t_volume;
+                document.getElementById("l_fuel_h").value = obj.l_fuel_h;
+                document.getElementById("l_fuel_l").value = obj.l_fuel_l;
+                document.getElementById("l_water_h").value = obj.l_water_h;
+                document.getElementById("l_temp_h").value = obj.l_temp_h;
+                document.getElementById("t_offset").value = obj.t_offset;
+                document.getElementById("t_offset_water").value = obj.t_offset_water;
+                document.getElementById("p_addr").value = obj.p_addr;
+                document.getElementById("p_enable").checked = obj.p_enable;
+
+                var p_oil = document.getElementById("p_oil").value;
+                if (p_oil == 0) {
+                    document.getElementById("p_oil").className = "cGreen";
+                } else if (p_oil == 1) {
+                    document.getElementById("p_oil").className = "cBlue";
+                } else if (p_oil == 2) {
+                    document.getElementById("p_oil").className = "cBlue";
+                } else if (p_oil == 3) {
+                    document.getElementById("p_oil").className = "cXanhLo";
+                } else if (p_oil == 4) {
+                    document.getElementById("p_oil").className = "cOrange";
+                } else if (p_oil == 5) {
+                    document.getElementById("p_oil").className = "cOrange";
+                } else if (p_oil == 6) {
+                    document.getElementById("p_oil").className = "cTim";
+                } else if (p_oil == 7) {
+                    document.getElementById("p_oil").className = "cOrange";
+                } else {
+                    document.getElementById("p_oil").className = "cBlack";
+                }
+            }
+        }
+
+        function probe_setting_tank_onChange($i) {
+            probe_setting_request($i);
+        }
+
+        function probe_setting_oil_onChange($i) {
+            var p_oil = $i;
+            if (p_oil == 0) {
+                document.getElementById("p_oil").className = "cGreen";
+            } else if (p_oil == 1) {
+                document.getElementById("p_oil").className = "cBlue";
+            } else if (p_oil == 2) {
+                document.getElementById("p_oil").className = "cBlue";
+            } else if (p_oil == 3) {
+                document.getElementById("p_oil").className = "cXanhLo";
+            } else if (p_oil == 4) {
+                document.getElementById("p_oil").className = "cOrange";
+            } else if (p_oil == 5) {
+                document.getElementById("p_oil").className = "cOrange";
+            } else if (p_oil == 6) {
+                document.getElementById("p_oil").className = "cTim";
+            } else if (p_oil == 7) {
+                document.getElementById("p_oil").className = "cOrange";
+            } else {
+                document.getElementById("p_oil").className = "cBlack";
+            }
+        }
+
+        function probe_setting_request(tank) {
+            document.getElementById("p_tank").value = current_probe_tank;
+            document.getElementById("p_oil").value = 100;
+            document.getElementById("t_volume").value = "";
+            document.getElementById("l_fuel_h").value = "";
+            document.getElementById("l_fuel_l").value = "";
+            document.getElementById("l_water_h").value = "";
+            document.getElementById("l_temp_h").value = "";
+            document.getElementById("t_offset").value = "";
+            document.getElementById("t_offset_water").value = "";
+            document.getElementById("p_addr").value = "";
+            document.getElementById("p_enable").checked = 0;
+            client.get('/get?param_wifi=probe_param_setting&tank=' + tank, function(response) {
+                console.log(response);
+                current_probe_tank = tank;
+                json_setting_page = JSON.parse(response);
+                if (json_setting_page) {
+                    probe_setting_page_display(json_setting_page);
+                }
+            });
+        }
+
+        function barem_file_validation() {
+            var fileInput =
+                document.getElementById('barem_file');
+
+            var filePath = fileInput.value;
+
+            // Allowing file type
+            var allowedExtensions = /(\.csv)$/i;
+
+            if (!allowedExtensions.exec(filePath)) {
+                alert('Invalid file type');
+                fileInput.value = '';
+                return false;
+            }
+
+            // Allowing file size
+            if (fileInput.files && fileInput.files[0]) {
+                var files = fileInput.files;
+                var size = files[0].size;
+                console.log(size);
+                if (size > (1024 * 50)) {
+                    alert('Invalid file size');
+                    fileInput.value = '';
+                    return false;
+                }
+            }
+        }
+
+        /* Button upload probe barem file */
+        function probe_barem_button_upload() {
+            document.getElementById("barem_button_upload").addEventListener("click", function() {
+                var tank = document.getElementById("p_tank").value;
+                var answer = confirm("Xác nhận upload barem bồn " + tank);
+                if (!answer) return;
+                // Get the file the user picked
+                var files = document.getElementById("barem_file").files;
+                if (!files.length) {
+                    return;
+                }
+                var file = files[0];
+                var filename = "/barem_";
+                var tank2str = add_1zero_number(tank);
+                filename += tank2str;
+                filename += ".csv";
+                console.log("Barem name: " + filename);
+                // Create a new one with the data but a new name
+                var newFile = new File([file], filename, {
+                    type: file.type,
+                });
+                // Build the FormData to send
+                var data = new FormData();
+                data.set("data", newFile);
+                // Send it
+                fetch("/edit_sdfs", {
+                        method: "POST",
+                        body: data
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("HTTP error " + response.status);
+                        }
+                        return response.text(); // or response.json() or whatever
+                    })
+                    .then(response => {
+                        // Do something with the response
+                    })
+                    .catch(error => {
+                        // Do something with the error
+                    });
+            });
+        }
+
+        function probe_barem_download() {
+            var tank = document.getElementById("p_tank").value;
+            var answer = confirm("Xác nhận download barem bồn " + tank);
+            if (!answer) return;
+            var filename = "/barem_";
+
+            var tank2str = add_1zero_number(tank);
+            filename += tank2str;
+            filename += ".csv";
+            console.log("Barem name: " + filename);
+            window.open("/edit_sdfs?download=" + filename);
+        }
+
+        function onBodyLoad() {
+            client.get('/probe_body_setting.htm', function(response) {
+                console.log("probe_body_setting ok");
+                probe_body_setting = response;
+                client.get('/get?param_wifi=device_info', function(response) {
+                    console.log(response);
+                    var obj = JSON.parse(response);
+                    device_name = obj.name;
+                    device_addr = obj.addr;
+
+                    var BodyHtml = probe_body_setting;
+                    page_current = PAGE_PROBE_SETTING;
+                    BodyHtml = BodyHtml.replace("{ten}", device_name);
+                    BodyHtml = BodyHtml.replace("{dia chi}", device_addr);
+                    BodyHtml = BodyHtml.replace("{ket noi}", "Chờ kết nối");
+                    BodyHtml = BodyHtml.replace("{color}", "blue");
+                    document.getElementById('Body').innerHTML = BodyHtml;
+                    /* Must be call after generate body html*/
+                    display_time();
+                    probe_connection_status();
+                    probe_barem_button_upload();
+
+                    startEvents();
+                    probe_setting_request(current_probe_tank);
+                });
+            });
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()" id="Body">
+</body>
+
+<script>
+</script>
+
+</html>

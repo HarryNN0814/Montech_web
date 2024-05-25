@@ -1,0 +1,132 @@
+<div style="text-align:left;display:inline-block;min-width:260px;">
+    <br><br>
+    <h3>{ten}</h3>
+    <table width="100%" style="margin-bottom: 0px;" id="TableInfo" class="tableNoBorder">
+        <tbody>
+            <tr>
+                <td style="text-align: left;padding-left: 4;">Địa chỉ: {dia chi}</td>
+                <td> </td>
+                <td style="text-align: right; padding-right: 5;"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td style="text-align: right; color: {color}; padding:10; padding-top: 0;padding-right: 5;">{ket noi}</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;padding-left: 4; color: #ff5722;"><u><b>CÀI ĐẶT BỒN</b></u></td>
+                <td style="text-align: center; color: #00B0F0; padding-right: 5;" onclick="home_page()">
+                    <b>Trang Chủ</b>
+                </td>
+                <td style="text-align: right; color: #00B0F0; padding-right: 5;" onclick="probe_find_log_page()">
+                    <b>Tìm Kiếm</b>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="width:100%;overflow-x:scroll;">
+        <table width="100%" class="tableNoBorder">
+            <tbody>
+                <tr>
+                    <td align="left"><b>Chọn Bồn</b></td>
+                    <td align="left">
+                        <select id="p_tank" name="p_tank" onchange="probe_setting_tank_onChange(value);">
+                            <option value=1 selected>Bồn 1</option>
+                            <option value=2 >Bồn 2</option>
+                            <option value=3 >Bồn 3</option>
+                            <option value=4 >Bồn 4</option>
+                            <option value=5 >Bồn 5</option>
+                            <option value=6 >Bồn 6</option>
+                            <option value=7 >Bồn 7</option>
+                            <option value=8 >Bồn 8</option>
+                            <option value=9 >Bồn 9</option>
+                            <option value=10 >Bồn 10</option>
+                            <option value=100 >None</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Nhiên Liệu</b></td>
+                    <td align="left">
+                        <select id="p_oil" name="p_oil" onchange="probe_setting_oil_onChange(value);">
+                            <option value=0 class="cGreen">A92_II</option>
+                            <option value=1 class="cBlue" selected>A95_III</option>
+                            <option value=2 class="cBlue" >A95_IV</option>
+                            <option value=3 class="cXanhLo" >E5</option>
+                            <option value=4 class="cOrange" >DO</option>
+                            <option value=5 class="cOrange" >DO_II</option>
+                            <option value=6 class="cTim" >KO</option>
+                            <option value=7 class="cOrange" >DO_V</option>
+                            <option value=100 class="cBlack" >None</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Dung Tích (Lít)</b></td>
+                    <td align="left"><input type="number" id="t_volume" name="t_volume" size="13" maxlength="10">
+                </tr>
+                <tr>
+                    <td align="left"><b>Mức Nhiên Liệu Tối Đa (mm)</b></td>
+                    <td align="left"><input type="number" id="l_fuel_h" name="l_fuel_h" size="13" maxlength="10">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Mức Nhiên Liệu Tối Thiểu (mm)</b></td>
+                    <td align="left"><input type="number" id="l_fuel_l" name="l_fuel_l" size="13" maxlength="10">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Mức Nước Tối Đa (mm)</b></td>
+                    <td align="left"><input type="number" id="l_water_h" name="l_water_h" size="13" maxlength="10">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Nhiệt Độ Cao Cảnh Báo (°C)</b></td>
+                    <td align="left"><input type="number" id="l_temp_h" name="l_temp_h" size="13" maxlength="10">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" id="total_text"><b>Cân Chỉnh Nhiên Liệu</b></td>
+                    <td align="left"><input type="number" id="t_offset" name="t_offset" size="13" maxlength="10">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" id="total_text"><b>Cân Chỉnh Mực Nước</b></td>
+                    <td align="left"><input type="number" id="t_offset_water" name="t_offset_water" size="13" maxlength="10">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" id="total_text" onclick="probe_addr_setup_page()"><b>Địa Chỉ Que Đo</b></td>
+                    <td align="left"><input type="number" id="p_addr" name="p_addr" size="13" maxlength="10">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Cho Phép</b></td>
+                    <td align="left"><label class="switch"><input type="checkbox" id="p_enable" name="p_enable" value=1 checked>
+                            <div class="slider round"></div>
+                        </label></td>
+                </tr>
+                <tr>
+                    <td><input type="button" onclick="probe_setting_submit()" value="Xác nhận"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td align='left'><b>Nhập File Barem (.csv)</b></td>
+                    <td><input type="file" id="barem_file" onchange="return barem_file_validation()"></td>
+                </tr>
+                <tr>
+                    <td><input type="button" id="barem_button_upload" value="Upload File"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><input type="button" onclick="probe_barem_download()" value="Download File"></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style="text-align: center;">
+        <font size="0" face="arial" color="gray">
+            Copyright © 2021 - Bản quyền thuộc về Công ty TNHH Kỹ Thuật Mon</font>
+    </p>
+</div>

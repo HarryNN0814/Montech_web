@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TẢI LOG</title>
+    <link rel="stylesheet" href="/mystyle.css" />
+  </head>
+  <body>
+    <h1 style="text-align: center">CHỌN NGÀY TẢI LOG</h1>
+    <div style="display: flex; justify-content: center">
+      <input type="date" id="dateInput" style="width: 200px" />
+      <button onclick="downloadFile()" style="margin-left: 10px">
+        Tải xuống
+      </button>
+    </div>
+
+    <script>
+      function downloadFile() {
+        var dateInput = document.getElementById("dateInput").value; // YYYY-MM-DD
+        if (!dateInput) return;
+        var dateParts = dateInput.split("-"); // ["YYYY", "MM", "DD"]
+        var filePath =
+          "/" +
+          dateParts[0] +
+          "/" +
+          dateParts[1] +
+          "/" +
+          dateParts.join("") +
+          ".csv";
+        window.open("/edit_sdfs?download=" + filePath);
+      }
+    </script>
+  </body>
+</html>

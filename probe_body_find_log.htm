@@ -1,0 +1,112 @@
+<div style="text-align:left;display:inline-block;min-width:260px;">
+    <h3>{ten}</h3>
+    <table width="100%" style="margin-bottom: 0px;" id="TableInfo" class="tableNoBorder">
+        <tbody>
+            <tr>
+                <td style="text-align: left;padding-left: 4;">Địa chỉ: {dia chi}</td>
+                <td></td>
+                <td style="text-align: right; padding-right: 5;"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td style="text-align: right; color: {color}; padding:10; padding-top: 0;padding-right: 5;">{ket noi}</td>
+            </tr>
+        </tbody>
+    </table>
+    <table width="100%" style="margin-bottom: 0px;" class="tableNoBorder">
+        <tbody>
+            <tr>
+                <td style="text-align: left;padding-left: 4; color: #ff5722;"><u><b>SỐ LIỆU THEO KHUNG THỜI GIAN</b></u></td>
+                <td style="text-align: center; color: #00B0F0; padding-right: 5;" onclick="home_page()">
+                    <b>Trang Chủ</b>
+                </td>
+                <td style="text-align: right; color: #00B0F0; padding-right: 5;" onclick="probe_in_out_page()">
+                    <b>Xuất / Nhập Bồn</b>
+                </td>
+                <td style="text-align: right; color: #00B0F0; padding-right: 5;" onclick="probe_setting_page()">
+                    <b>Cài Đặt Bồn</b>
+                </td>
+                <td style="text-align: right; color: #00B0F0; padding-right: 5;" onclick="probe_find_time_setting_page()">
+                    <b>Đổi Thời Gian Tìm Kiếm</b>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <table width="100%" style="margin-bottom: -10px;" id="sale_shift_time1" class="tableNoBorder">
+        <tbody>
+            <tr>
+                <td></td>
+                <td style="text-align: center;padding-right: 0;"><b>Ngày bắt đầu (ddmmyy)</b></td>
+                <td style="text-align: center;padding-right: 0;"><b>Giờ bắt đầu (hhmmss)</b></td>
+                <td style="text-align: center;padding-right: 0;"><b>Ngày kết thúc (ddmmyy)</b></td>
+                <td style="text-align: center;padding-right: 0;"><b>Giờ kết thúc (hhmmss)</b></td>
+            </tr>
+            <tr>
+                <td style="text-align: left;padding-left: 0;"><input type="button" value="Ca Bán 1" onclick="probe_find_log_time_sale_shift(1)"></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <div style="width:100%;overflow-x:scroll;">
+        <table border="1" id="sale_shift1" width="100%">
+        </table>
+    </div>
+    <br>
+    <table width="100%" style="margin-bottom: -10px;" id="sale_shift_time2" class="tableNoBorder">
+        <tbody>
+            <tr>
+                <td></td>
+                <td style="text-align: center;padding-right: 0;"><b>Ngày bắt đầu (ddmmyy)</b></td>
+                <td style="text-align: center;padding-right: 0;"><b>Giờ bắt đầu (hhmmss)</b></td>
+                <td style="text-align: center;padding-right: 0;"><b>Ngày kết thúc (ddmmyy)</b></td>
+                <td style="text-align: center;padding-right: 0;"><b>Giờ kết thúc (hhmmss)</b></td>
+            </tr>
+            <tr>
+                <td style="text-align: left;padding-left: 0;"><input type="button" value="Ca Bán 2" onclick="probe_find_log_time_sale_shift(2)"></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <div style="width:100%;overflow-x:scroll;">
+        <table border="1" id="sale_shift2" width="100%">
+        </table>
+    </div>
+    <br>
+    <table width="100%" style="margin-bottom: -10px;" id="sale_shift_time3" class="tableNoBorder">
+        <tbody>
+            <tr>
+                <td></td>
+                <td style="text-align: center;padding-right: 0;"><b>Ngày bắt đầu (ddmmyy)</b></td>
+                <td style="text-align: center;padding-right: 0;"><b>Giờ bắt đầu (hhmmss)</b></td>
+                <td style="text-align: center;padding-right: 0;"><b>Ngày kết thúc (ddmmyy)</b></td>
+                <td style="text-align: center;padding-right: 0;"><b>Giờ kết thúc (hhmmss)</b></td>
+            </tr>
+            <tr>
+                <td style="text-align: left;padding-left: 0;"><input type="button" value="Ca Bán 3" onclick="probe_find_log_time_sale_shift(3)"></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="10" size="6" class="text-center" /></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <div style="width:100%;overflow-x:scroll;">
+        <table border="1" id="sale_shift3" width="100%">
+        </table>
+    </div>
+    <p style="text-align: center;">
+        <font size="0" face="arial" color="gray">
+            Copyright © 2021 - Bản quyền thuộc về Công ty TNHH Kỹ Thuật Mon</font>
+    </p>
+</div>

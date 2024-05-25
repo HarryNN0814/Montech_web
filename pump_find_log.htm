@@ -1,0 +1,1114 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/mystyle.css">
+    <title id="TitleInfo">Số Liệu Vòi Theo Khung Thời Gian</title>
+    <script src="/myscripts.js"></script>
+    <script>
+        var BodyHome = "<div style=\"text-align:left;display:inline-block;min-width:260px;\">\
+                <h3 style=\"text-align: center;margin: 5px;margin-left: 0;padding-left: 0;\">{ten}</h3>\
+                <table border=\"0\" width=\"100%\" style=\"margin-bottom: -10px; background-color: rgba(255,255,255,0.8);\" id=\"TableInfo\">\
+                    <tbody>\
+                    <tr>\
+                        <td style=\"text-align: left;padding-left: 0;\">Địa chỉ: {dia chi}</td>\
+                        <td style=\"text-align: right;padding-right: 0;\">{ngay} {gio}</td>\
+                        </tr>\
+                        </tbody></table>\
+                <br>\
+        <table border=\"0\" width=\"100%\" style=\"margin-bottom: -10px; background-color: rgba(255,255,255,0.8);\" id=\"SearchInfo\">\
+                    <tbody>\
+                    <tr>\
+                        <td></td>\
+                        <td style=\"text-align: center;padding-right: 0;\">Ngày bắt đầu (ddmmyy)</td>\
+                        <td style=\"text-align: center;padding-right: 0;\">Giờ bắt đầu (hhmmss)</td>\
+                        <td style=\"text-align: center;padding-right: 0;\">Ngày kết thúc (ddmmyy)</td>\
+                        <td style=\"text-align: center;padding-right: 0;\">Giờ kết thúc (hhmmss)</td>\
+                        </tr>\
+                    <tr>\
+                        <td style=\"text-align: left;padding-left: 0;\"><input type=\"button\" value=\"Ca bán 1\" onclick=\"SearchLog()\"></td>\
+                        <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{d_start}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                        <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{t_start}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                        <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{d_stop}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                        <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{t_stop}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                        </tr>\
+                        </tbody></table>\
+                <br>\
+<div style=\"width:100%;overflow-x:scroll;\">\
+        <table border=\"1\" id=\"TablePump\" width=\"100%\">\
+        </table>\
+        </div>\
+        <br>\
+        <table border=\"0\" width=\"100%\" style=\"margin-bottom: -10px; background-color: rgba(255,255,255,0.8);\" id=\"SearchInfo1\">\
+            <tbody>\
+            <tr>\
+                <td></td>\
+                <td style=\"text-align: center;padding-right: 0;\">Ngày bắt đầu (ddmmyy)</td>\
+                <td style=\"text-align: center;padding-right: 0;\">Giờ bắt đầu (hhmmss)</td>\
+                <td style=\"text-align: center;padding-right: 0;\">Ngày kết thúc (ddmmyy)</td>\
+                <td style=\"text-align: center;padding-right: 0;\">Giờ kết thúc (hhmmss)</td>\
+                </tr>\
+            <tr>\
+                <td style=\"text-align: left;padding-left: 0;\"><input type=\"button\" value=\"Ca bán 2\" onclick=\"SearchLog()\"></td>\
+                <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{d_start1}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{t_start1}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{d_stop1}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{t_stop1}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                </tr>\
+                </tbody></table>\
+                <br>\
+<div style=\"width:100%;overflow-x:scroll;\">\
+        <table border=\"1\" id=\"TablePump1\" width=\"100%\">\
+        </table>\
+        </div>\
+        <br>\
+        <table border=\"0\" width=\"100%\" style=\"margin-bottom: -10px; background-color: rgba(255,255,255,0.8);\" id=\"SearchInfo2\">\
+            <tbody>\
+            <tr>\
+                <td></td>\
+                <td style=\"text-align: center;padding-right: 0;\">Ngày bắt đầu (ddmmyy)</td>\
+                <td style=\"text-align: center;padding-right: 0;\">Giờ bắt đầu (hhmmss)</td>\
+                <td style=\"text-align: center;padding-right: 0;\">Ngày kết thúc (ddmmyy)</td>\
+                <td style=\"text-align: center;padding-right: 0;\">Giờ kết thúc (hhmmss)</td>\
+                </tr>\
+            <tr>\
+                <td style=\"text-align: left;padding-left: 0;\"><input type=\"button\" value=\"Ca bán 3\" onclick=\"SearchLog()\"></td>\
+                <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{d_start2}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{t_start2}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{d_stop2}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                <td style=\"text-align: right;padding-right: 0;\"><input type=\"number\" value=\"{t_stop2}\" maxlength=\"10\" size=\"6\" class=\"text-center\" /></td>\
+                </tr>\
+                </tbody></table>\
+                <br>\
+        <div style=\"width:100%;overflow-x:scroll;\">\
+        <table border=\"1\" id=\"TablePump2\" width=\"100%\">\
+        </table>\
+        </div>\
+        <table style='background-color: rgba(255,255,255,0.8);'>\
+        <p style=\"text-align: center;\"><font size=\"2\" face=\"arial\" color=\"black\">\
+                    <a href='https://tavitech.com.vn/'>Copyright © 2022 - Bản quyền thuộc về Công ty TNHH Kỹ Thuật Mon</a></font></p>\</table>";
+        var myTable = "<table style='background-color: rgba(255,255,255,0.8);'>\
+                            <tr>\
+                                <th rowspan=\"2\">Vòi</th>\
+                                <th rowspan=\"2\" onclick=\"upload_log()\">Nhiên Liệu</th>\
+                                <th rowspan=\"2\">Serial</th>\
+                                <th colspan=\"2\">Số Tiền (đồng)</th>\
+                                <th rowspan=\"2\">Tổng Số Tiền (đồng)</th>\
+                                <th colspan=\"2\">Số Lượng (lít)</th>\
+                                <th rowspan=\"2\">Tổng Số Lượng (lít)</th>\
+                                <th rowspan=\"2\">Tải Về Nhật Ký Cuộc Bơm</th>\
+                            </tr>\
+                            <tr>\
+                                <th>Bắt Đầu</th>\
+                                <th>Kết Thúc</th>\
+                                <th>Bắt Đầu</th>\
+                                <th>Kết Thúc</th>\
+                            </tr>\
+                        </table>";
+
+        var myTableTr = "<tr style='background-color: rgba(255,255,255,0.8);'>\
+                            <td rowspan=\"2\">{voi}</td>\
+                            <td rowspan=\"2\" style=\"color: {color};\">{nhienlieu}</td>\
+                            <td rowspan=\"2\" onclick='delect_log(this);'>{serial}</td>\
+                            <td>{batdau_t}</td>\
+                            <td>{ketthuc_t}</td>\
+                            <td><b>{tong_tien}</b></td>\
+                            <td>{batdau_l}</td>\
+                            <td>{ketthuc_l}</td>\
+                            <td><b>{tong_lit}</b></td>\
+                            <td rowspan=\"2\" style=\"color: #11C7DA;\" onclick='download_log(this);'>></td>\
+                        </tr>\
+                        <tr style='background-color: rgba(255,255,255,0.8);'>\
+                            <td>{batdau_t1}</td>\
+                            <td>{ketthuc_t1}</td>\
+                            <td><b>{tong_tien1}</b></td>\
+                            <td>{batdau_l1}</td>\
+                            <td>{ketthuc_l1}</td>\
+                            <td><b>{tong_lit1}</b></td>\
+                        </tr>";
+
+        var myTableTotal = "<tr style='background-color: rgba(255,255,255,0.8);'>\
+                            <td rowspan=\"2\" colspan=\"5\" style=\"color: {color_tt}; text-align: left;\"><b>{tong_so}</b></td>\
+                            <td style=\"color: {color};\"><b>{tong_tien}</b></td>\
+                            <td rowspan=\"2\" colspan=\"2\"></td>\
+                            <td style=\"color: {color};\"><b>{tong_lit}</b></td>\
+                            <td rowspan=\"2\"></td>\
+                            </tr>\
+                        <tr style='background-color: rgba(255,255,255,0.8);'>\
+                            <td style=\"color: {color};\"><b>{tong_tien1}</b></td>\
+                            <td style=\"color: {color};\"><b>{tong_lit1}</b></td>\
+                        </tr>";
+
+        var myTable_space = "<tr style='background-color: rgba(255,255,255,0.8);'>\
+                        <td colspan=\"10\" class=\"{border}\" style=\"text-align: left;padding-left: 0;padding-bottom: 5; color: {color}; font-size: 13px;\">\
+                        <b>{text}</b>\
+                        </td></tr>";
+
+        var A92_II = 0;
+        var A95_III = 1;
+        var A95_IV = 2;
+        var E5 = 3;
+        var DO = 4;
+        var DO_II = 5;
+        var KO = 6;
+        var DO_V = 7;
+        var A95_V = 8;
+        var A97_IV = 9;
+        var A97_V = 10;
+        var FUEL_OIL_NUM = 11;
+        var pump_log_name_prefix = "301";
+
+        var pum_id = 0;
+        // date start, day stop, time start, time stop
+        function GetTotalinfo(pass, d_start, d_stop, t_start, t_stop,
+            d_start1, d_stop1, t_start1, t_stop1,
+            d_start2, d_stop2, t_start2, t_stop2
+        ) {
+            console.log("Search " + d_start + ", " + d_stop + ", " + t_start + ", " + t_stop);
+            d_start = d_start % 1000000;
+            d_stop = d_stop % 1000000;
+            t_start = t_start % 235960;
+            t_stop = t_stop % 235960;
+            var obj;
+            //load data
+            client.get("get?param_wifi=search_log&Pass=" + pass + "&d_start=" + d_start + "&d_stop=" + d_stop + "&t_start=" + t_start + "&t_stop=" + t_stop, function(response) {
+                console.log(response);
+                obj = JSON.parse(response);
+                if (obj.St && obj.St == "Error") {
+                    onBodyLoad();
+                    return;
+                }
+                console.log("Search " + d_start1 + ", " + d_stop1 + ", " + t_start1 + ", " + t_stop1);
+                d_start1 = d_start1 % 1000000;
+                d_stop1 = d_stop1 % 1000000;
+                t_start1 = t_start1 % 235960;
+                t_stop1 = t_stop1 % 235960;
+                var obj1;
+                //load data
+                client.get("get?param_wifi=search_log&Pass=" + pass + "&d_start=" + d_start1 + "&d_stop=" + d_stop1 + "&t_start=" + t_start1 + "&t_stop=" + t_stop1, function(response) {
+                    console.log(response);
+                    obj1 = JSON.parse(response);
+                    if (obj1.St && obj1.St == "Error") {
+                        onBodyLoad();
+                        return;
+                    }
+                    console.log("Search " + d_start2 + ", " + d_stop2 + ", " + t_start2 + ", " + t_stop2);
+                    d_start2 = d_start2 % 1000000;
+                    d_stop2 = d_stop2 % 1000000;
+                    t_start2 = t_start2 % 235960;
+                    t_stop2 = t_stop2 % 235960;
+                    var obj2;
+                    //load data
+                    client.get("get?param_wifi=search_log&Pass=" + pass + "&d_start=" + d_start2 + "&d_stop=" + d_stop2 + "&t_start=" + t_start2 + "&t_stop=" + t_stop2, function(response) {
+                        console.log(response);
+                        obj2 = JSON.parse(response);
+                        if (obj2.St && obj2.St == "Error") {
+                            onBodyLoad();
+                            return;
+                        }
+
+                        var BodyHtml = BodyHome;
+
+                        // time0
+                        var str_start = "";
+                        var start_limit = 100000;
+                        for (var i = 0; i < 5; i++) {
+                            if (t_start < start_limit) {
+                                str_start += '0';
+                            }
+                            start_limit /= 10;
+                        }
+
+                        str_start += t_start;
+
+                        var str_stop = "";
+                        var stop_limit = 100000;
+                        for (var i = 0; i < 5; i++) {
+                            if (t_stop < stop_limit) {
+                                str_stop += '0';
+                            }
+                            stop_limit /= 10;
+                        }
+                        str_stop += t_stop;
+
+                        BodyHtml = BodyHtml.replace("{d_start}", (d_start < 100000) ? ('0' + d_start) : d_start);
+                        BodyHtml = BodyHtml.replace("{t_start}", str_start);
+                        BodyHtml = BodyHtml.replace("{d_stop}", (d_stop < 100000) ? ('0' + d_stop) : d_stop);
+                        BodyHtml = BodyHtml.replace("{t_stop}", str_stop);
+
+                        // time1
+                        var str_start1 = "";
+                        var start_limit1 = 100000;
+                        for (var i = 0; i < 5; i++) {
+                            if (t_start1 < start_limit1) {
+                                str_start1 += '0';
+                            }
+                            start_limit1 /= 10;
+                        }
+
+                        str_start1 += t_start1;
+
+                        var str_stop1 = "";
+                        var stop_limit1 = 100000;
+                        for (var i = 0; i < 5; i++) {
+                            if (t_stop1 < stop_limit1) {
+                                str_stop1 += '0';
+                            }
+                            stop_limit1 /= 10;
+                        }
+                        str_stop1 += t_stop1;
+
+                        BodyHtml = BodyHtml.replace("{d_start1}", (d_start1 < 100000) ? ('0' + d_start1) : d_start1);
+                        BodyHtml = BodyHtml.replace("{t_start1}", str_start1);
+                        BodyHtml = BodyHtml.replace("{d_stop1}", (d_stop1 < 100000) ? ('0' + d_stop1) : d_stop1);
+                        BodyHtml = BodyHtml.replace("{t_stop1}", str_stop1);
+
+                        // time2
+                        var str_start2 = "";
+                        var start_limit2 = 100000;
+                        for (var i = 0; i < 5; i++) {
+                            if (t_start2 < start_limit2) {
+                                str_start2 += '0';
+                            }
+                            start_limit2 /= 10;
+                        }
+
+                        str_start2 += t_start2;
+
+                        var str_stop2 = "";
+                        var stop_limit2 = 100000;
+                        for (var i = 0; i < 5; i++) {
+                            if (t_stop2 < stop_limit2) {
+                                str_stop2 += '0';
+                            }
+                            stop_limit2 /= 10;
+                        }
+                        str_stop2 += t_stop2;
+
+                        BodyHtml = BodyHtml.replace("{d_start2}", (d_start2 < 100000) ? ('0' + d_start2) : d_start2);
+                        BodyHtml = BodyHtml.replace("{t_start2}", str_start2);
+                        BodyHtml = BodyHtml.replace("{d_stop2}", (d_stop2 < 100000) ? ('0' + d_stop2) : d_stop2);
+                        BodyHtml = BodyHtml.replace("{t_stop2}", str_stop2);
+
+                        BodyHtml = BodyHtml.replace("{ten}", obj2.NamePump);
+                        BodyHtml = BodyHtml.replace("{dia chi}", obj2.AddrPump);
+                        BodyHtml = BodyHtml.replace("{ngay}", obj2.Date);
+                        BodyHtml = BodyHtml.replace("{gio}", obj2.Time);
+
+                        if (obj2.NumPump) {
+                            pum_id = Number(obj2.NumPump);
+                            if (obj2.NumPump == 255) {
+                                document.getElementById('TitleInfo').innerHTML = "Tìm kiếm nhiều Vòi";
+                            } else {
+                                document.getElementById('TitleInfo').innerHTML = "Tìm kiếm 1 Vòi";
+                            }
+                        }
+                        document.getElementById('Body').innerHTML = BodyHtml;
+
+                        // time0
+                        // C1: Voi, C2: Nhiên liệu, C3: Serial
+                        // C4: Bắt đầu tiền, C5: kết thúc tiền, C6: tổng số tiền, C7: bắt đầu lít, C8: kết thúc lít, C9: Tổng số lượng
+                        // C4_1: Bắt đầu tiền, C5_1: kết thúc tiền, C6_1: tổng số tiền, C7_1: bắt đầu lít, C8_1: kết thúc lít, C9_1: Tổng số lượng                        
+                        var ttv_nl0 = [],
+                            ttv1_nl0 = [],
+                            ttc_nl0 = [],
+                            ttc1_nl0 = [];
+                        var ttv = 0,
+                            ttv1 = 0,
+                            ttc = 0,
+                            ttc1 = 0;
+                        var tt;
+                        var Rows = "";
+                        var tt_a95 = "",
+                            tt_a97 = "",
+                            tt_e5 = "",
+                            tt_do = "",
+                            tt_ko = "";
+                        var nl_a95 = 0,
+                            nl_a97 = 0,
+                            nl_e5 = 0,
+                            nl_do = 0,
+                            nl_ko = 0;
+                        var index = 0;
+                        for (var i = 0; i < FUEL_OIL_NUM; ++i) {
+                            ttv_nl0[i] = 0;
+                            ttv1_nl0[i] = 0;
+                            ttc_nl0[i] = 0;
+                            ttc1_nl0[i] = 0;
+                        }
+                        while (obj.Total[index]) {
+                            Rows += myTableTr;
+                            Rows = Rows.replace("{voi}", obj.Total[index].C1);
+                            //Nhiên liệu
+                            /*
+                            #define c_Black	"black"
+                            #define c_Green	"#92D14F"
+                            #define c_Blue	"blue"
+                            #define c_Orange	"orange"
+                            #define c_XanhLo	"#11C7DA"
+                            #define c_Tim	"#7030A0"
+                            #define c_E10	"#538DD5"
+                            */
+                            var Nl = obj.Total[index].C2;
+                            if (Nl == 0) {
+                                Rows = Rows.replace("{nhienlieu}", "A92_II");
+                                Rows = Rows.replace("{color}", "#92D14F");
+                            } else if (Nl == 1) {
+                                Rows = Rows.replace("{nhienlieu}", "A95_III");
+                                Rows = Rows.replace("{color}", "blue");
+                                nl_a95 = 1;
+                            } else if (Nl == 2) {
+                                Rows = Rows.replace("{nhienlieu}", "A95_IV");
+                                Rows = Rows.replace("{color}", "blue");
+                                nl_a95 = 1;
+                            } else if (Nl == 3) {
+                                Rows = Rows.replace("{nhienlieu}", "E5");
+                                Rows = Rows.replace("{color}", "#11C7DA");
+                                nl_e5 = 1;
+                            } else if (Nl == 4) {
+                                Rows = Rows.replace("{nhienlieu}", "DO");
+                                Rows = Rows.replace("{color}", "orange");
+                                nl_do = 1;
+                            } else if (Nl == 5) {
+                                Rows = Rows.replace("{nhienlieu}", "DO_II");
+                                Rows = Rows.replace("{color}", "orange");
+                                nl_do = 1;
+                            } else if (Nl == 6) {
+                                Rows = Rows.replace("{nhienlieu}", "KO");
+                                Rows = Rows.replace("{color}", "#7030A0");
+                                nl_ko = 1;
+                            } else if (Nl == 7) {
+                                Rows = Rows.replace("{nhienlieu}", "DO_V");
+                                Rows = Rows.replace("{color}", "orange");
+                                nl_do = 1;
+                            } else if (Nl == 8) {
+                                Rows = Rows.replace("{nhienlieu}", "A95_V");
+                                Rows = Rows.replace("{color}", "blue");
+                                nl_a95 = 1;
+                            } else if (Nl == 9) {
+                                Rows = Rows.replace("{nhienlieu}", "A97_IV");
+                                Rows = Rows.replace("{color}", "#92D14F");
+                                nl_do = 1;
+                            } else if (Nl == 10) {
+                                Rows = Rows.replace("{nhienlieu}", "A97_V");
+                                Rows = Rows.replace("{color}", "#92D14F");
+                                nl_do = 1;
+                            } else {
+                                Nl = 0;
+                                Rows = Rows.replace("{nhienlieu}", "Fail");
+                                Rows = Rows.replace("{color}", "black");
+                            }
+                            Rows = Rows.replace("{serial}", obj.Total[index].C3);
+                            // <td>{batdau_t}</td>\
+                            // <td>{ketthuc_t}</td>\
+                            // <td>{tong_tien}</td>\
+                            // <td>{batdau_l}</td>\
+                            // <td>{ketthuc_l}</td>\
+                            // <td>{tong_lit}</td>\
+                            Rows = Rows.replace("{batdau_t}", cash_format(Number(obj.Total[index].C4) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_t}", cash_format(Number(obj.Total[index].C5) / 1000, ""));
+                            Rows = Rows.replace("{tong_tien}", cash_format(Number(obj.Total[index].C6) / 1000, ""));
+                            Rows = Rows.replace("{batdau_l}", volume_format(Number(obj.Total[index].C7) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_l}", volume_format(Number(obj.Total[index].C8) / 1000, ""));
+                            Rows = Rows.replace("{tong_lit}", volume_format(Number(obj.Total[index].C9) / 1000, ""));
+
+                            Rows = Rows.replace("{batdau_t1}", cash_format(Number(obj.Total[index].C4_1) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_t1}", cash_format(Number(obj.Total[index].C5_1) / 1000, ""));
+                            Rows = Rows.replace("{tong_tien1}", cash_format(Number(obj.Total[index].C6_1) / 1000, ""));
+                            Rows = Rows.replace("{batdau_l1}", volume_format(Number(obj.Total[index].C7_1) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_l1}", volume_format(Number(obj.Total[index].C8_1) / 1000, ""));
+                            Rows = Rows.replace("{tong_lit1}", volume_format(Number(obj.Total[index].C9_1) / 1000, ""));
+
+                            ttc += Number(obj.Total[index].C6);
+                            ttc1 += Number(obj.Total[index].C6_1);
+
+                            ttv += Number(obj.Total[index].C9);
+                            ttv1 += Number(obj.Total[index].C9_1);
+
+                            ttc_nl0[Nl] += Number(obj.Total[index].C6);
+                            ttc1_nl0[Nl] += Number(obj.Total[index].C6_1);
+
+                            ttv_nl0[Nl] += Number(obj.Total[index].C9);
+                            ttv1_nl0[Nl] += Number(obj.Total[index].C9_1);
+
+                            index++;
+                        }
+
+                        if (1 == nl_a95) {
+                            tt_a95 = myTableTotal;
+                            tt_a95 = tt_a95.replace(/{color}/g, "black");
+                            tt_a95 = tt_a95.replace(/{color_tt}/g, "blue");
+                            tt_a95 = tt_a95.replace("{tong_so}", "Tổng A95:");
+                            tt_a95 = tt_a95.replace("{tong_tien}", cash_format((ttc_nl0[A95_III] + ttc_nl0[A95_IV] + ttc_nl0[A95_V]) / 1000, ""));
+                            tt_a95 = tt_a95.replace("{tong_tien1}", cash_format((ttc1_nl0[A95_III] + ttc1_nl0[A95_IV] + ttc1_nl0[A95_V]) / 1000, ""));
+                            tt_a95 = tt_a95.replace("{tong_lit}", volume_format((ttv_nl0[A95_III] + ttv_nl0[A95_IV] + ttv_nl0[A95_V]) / 1000, ""));
+                            tt_a95 = tt_a95.replace("{tong_lit1}", volume_format((ttv1_nl0[A95_III] + ttv1_nl0[A95_IV] + ttv1_nl0[A95_V]) / 1000, ""));
+                        }
+
+                        if (1 == nl_e5) {
+                            tt_e5 = myTableTotal;
+                            tt_e5 = tt_e5.replace(/{color}/g, "black");
+                            tt_e5 = tt_e5.replace(/{color_tt}/g, "#11C7DA");
+                            tt_e5 = tt_e5.replace("{tong_so}", "Tổng E5:");
+                            tt_e5 = tt_e5.replace("{tong_tien}", cash_format(ttc_nl0[E5] / 1000, ""));
+                            tt_e5 = tt_e5.replace("{tong_tien1}", cash_format(ttc1_nl0[E5] / 1000, ""));
+                            tt_e5 = tt_e5.replace("{tong_lit}", volume_format(ttv_nl0[E5] / 1000, ""));
+                            tt_e5 = tt_e5.replace("{tong_lit1}", volume_format(ttv1_nl0[E5] / 1000, ""));
+                        }
+
+                        if (1 == nl_do) {
+                            tt_do = myTableTotal;
+                            tt_do = tt_do.replace(/{color}/g, "black");
+                            tt_do = tt_do.replace(/{color_tt}/g, "orange");
+                            tt_do = tt_do.replace("{tong_so}", "Tổng DO:");
+                            tt_do = tt_do.replace("{tong_tien}", cash_format((ttc_nl0[DO] + ttc_nl0[DO_II] + ttc_nl0[DO_V]) / 1000, ""));
+                            tt_do = tt_do.replace("{tong_tien1}", cash_format((ttc1_nl0[DO] + ttc1_nl0[DO_II] + ttc1_nl0[DO_V]) / 1000, ""));
+                            tt_do = tt_do.replace("{tong_lit}", volume_format((ttv_nl0[DO] + ttv_nl0[DO_II] + ttv_nl0[DO_V]) / 1000, ""));
+                            tt_do = tt_do.replace("{tong_lit1}", volume_format((ttv1_nl0[DO] + ttv1_nl0[DO_II] + ttv1_nl0[DO_V]) / 1000, ""));
+                        }
+
+                        if (1 == nl_ko) {
+                            tt_ko = myTableTotal;
+                            tt_ko = tt_ko.replace(/{color}/g, "black");
+                            tt_ko = tt_ko.replace(/{color_tt}/g, "#7030A0");
+                            tt_ko = tt_ko.replace("{tong_so}", "Tổng KO:");
+                            tt_ko = tt_ko.replace("{tong_tien}", cash_format(ttc_nl0[KO] / 1000, ""));
+                            tt_ko = tt_ko.replace("{tong_tien1}", cash_format(ttc1_nl0[KO] / 1000, ""));
+                            tt_ko = tt_ko.replace("{tong_lit}", volume_format(ttv_nl0[KO] / 1000, ""));
+                            tt_ko = tt_ko.replace("{tong_lit1}", volume_format(ttv1_nl0[KO] / 1000, ""));
+                        }
+
+                        tt = myTableTotal;
+                        tt = tt.replace(/{color}/g, "#11C7DA");
+                        tt = tt.replace(/{color_tt}/g, "#11C7DA");
+                        tt = tt.replace("{tong_so}", "Tổng ca bán 1:");
+                        tt = tt.replace("{tong_tien}", cash_format(ttc / 1000, ""));
+                        tt = tt.replace("{tong_tien1}", cash_format(ttc1 / 1000, ""));
+                        tt = tt.replace("{tong_lit}", volume_format(ttv / 1000, ""));
+                        tt = tt.replace("{tong_lit1}", volume_format(ttv1 / 1000, ""));
+
+                        document.getElementById('TablePump').innerHTML = myTable + Rows + tt_a95 + tt_e5 + tt_do + tt_ko + tt;
+
+                        // time1
+                        // C1: Voi, C2: Nhiên liệu, C3: Serial
+                        // C4: Bắt đầu tiền, C5: kết thúc tiền, C6: tổng số tiền, C7: bắt đầu lít, C8: kết thúc lít, C9: Tổng số lượng
+                        // C4_1: Bắt đầu tiền, C5_1: kết thúc tiền, C6_1: tổng số tiền, C7_1: bắt đầu lít, C8_1: kết thúc lít, C9_1: Tổng số lượng
+                        var ttv_1_nl0 = [],
+                            ttv1_1_nl0 = [],
+                            ttc_1_nl0 = [],
+                            ttc1_1_nl0 = [];
+                        var ttv_1 = 0,
+                            ttv1_1 = 0,
+                            ttc_1 = 0,
+                            ttc1_1 = 0;
+                        Rows = "";
+                        tt_a95 = "", tt_a97 = "", tt_e5 = "", tt_do = "", tt_ko = "";
+                        nl_a95 = 0, nl_e5 = 0, nl_do = 0, nl_ko = 0;
+                        index = 0;
+                        for (var i = 0; i < FUEL_OIL_NUM; ++i) {
+                            ttv_1_nl0[i] = 0;
+                            ttv1_1_nl0[i] = 0;
+                            ttc_1_nl0[i] = 0;
+                            ttc1_1_nl0[i] = 0;
+                        }
+                        while (obj1.Total[index]) {
+                            Rows += myTableTr;
+                            Rows = Rows.replace("{voi}", obj1.Total[index].C1);
+                            //Nhiên liệu
+                            /*
+                            #define c_Black	"black"
+                            #define c_Green	"#92D14F"
+                            #define c_Blue	"blue"
+                            #define c_Orange	"orange"
+                            #define c_XanhLo	"#11C7DA"
+                            #define c_Tim	"#7030A0"
+                            #define c_E10	"#538DD5"
+                            */
+                            var Nl = obj1.Total[index].C2;
+                            if (Nl == 0) {
+                                Rows = Rows.replace("{nhienlieu}", "A92_II");
+                                Rows = Rows.replace("{color}", "#92D14F");
+                            } else if (Nl == 1) {
+                                Rows = Rows.replace("{nhienlieu}", "A95_III");
+                                Rows = Rows.replace("{color}", "blue");
+                                nl_a95 = 1;
+                            } else if (Nl == 2) {
+                                Rows = Rows.replace("{nhienlieu}", "A95_IV");
+                                Rows = Rows.replace("{color}", "blue");
+                                nl_a95 = 1;
+                            } else if (Nl == 3) {
+                                Rows = Rows.replace("{nhienlieu}", "E5");
+                                Rows = Rows.replace("{color}", "#11C7DA");
+                                nl_e5 = 1;
+                            } else if (Nl == 4) {
+                                Rows = Rows.replace("{nhienlieu}", "DO");
+                                Rows = Rows.replace("{color}", "orange");
+                                nl_do = 1;
+                            } else if (Nl == 5) {
+                                Rows = Rows.replace("{nhienlieu}", "DO_II");
+                                Rows = Rows.replace("{color}", "orange");
+                                nl_do = 1;
+                            } else if (Nl == 6) {
+                                Rows = Rows.replace("{nhienlieu}", "KO");
+                                Rows = Rows.replace("{color}", "#7030A0");
+                                nl_ko = 1;
+                            } else if (Nl == 7) {
+                                Rows = Rows.replace("{nhienlieu}", "DO_V");
+                                Rows = Rows.replace("{color}", "orange");
+                                nl_do = 1;
+                            } else if (Nl == 8) {
+                                Rows = Rows.replace("{nhienlieu}", "A95_V");
+                                Rows = Rows.replace("{color}", "blue");
+                                nl_do = 1;
+                            } else if (Nl == 9) {
+                                Rows = Rows.replace("{nhienlieu}", "A97_IV");
+                                Rows = Rows.replace("{color}", "#92D14F");
+                                nl_do = 1;
+                            } else if (Nl == 10) {
+                                Rows = Rows.replace("{nhienlieu}", "A97_V");
+                                Rows = Rows.replace("{color}", "#92D14F");
+                                nl_do = 1;
+                            } else {
+                                Rows = Rows.replace("{nhienlieu}", "Fail");
+                                Rows = Rows.replace("{color}", "black");
+                            }
+                            Rows = Rows.replace("{serial}", obj1.Total[index].C3);
+                            // <td>{batdau_t}</td>\
+                            // <td>{ketthuc_t}</td>\
+                            // <td>{tong_tien}</td>\
+                            // <td>{batdau_l}</td>\
+                            // <td>{ketthuc_l}</td>\
+                            // <td>{tong_lit}</td>\
+                            Rows = Rows.replace("{batdau_t}", cash_format(Number(obj1.Total[index].C4) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_t}", cash_format(Number(obj1.Total[index].C5) / 1000, ""));
+                            Rows = Rows.replace("{tong_tien}", cash_format(Number(obj1.Total[index].C6) / 1000, ""));
+                            Rows = Rows.replace("{batdau_l}", volume_format(Number(obj1.Total[index].C7) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_l}", volume_format(Number(obj1.Total[index].C8) / 1000, ""));
+                            Rows = Rows.replace("{tong_lit}", volume_format(Number(obj1.Total[index].C9) / 1000, ""));
+
+                            Rows = Rows.replace("{batdau_t1}", cash_format(Number(obj1.Total[index].C4_1) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_t1}", cash_format(Number(obj1.Total[index].C5_1) / 1000, ""));
+                            Rows = Rows.replace("{tong_tien1}", cash_format(Number(obj1.Total[index].C6_1) / 1000, ""));
+                            Rows = Rows.replace("{batdau_l1}", volume_format(Number(obj1.Total[index].C7_1) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_l1}", volume_format(Number(obj1.Total[index].C8_1) / 1000, ""));
+                            Rows = Rows.replace("{tong_lit1}", volume_format(Number(obj1.Total[index].C9_1) / 1000, ""));
+
+                            ttc_1 += Number(obj1.Total[index].C6);
+                            ttc1_1 += Number(obj1.Total[index].C6_1);
+
+                            ttv_1 += Number(obj1.Total[index].C9);
+                            ttv1_1 += Number(obj1.Total[index].C9_1);
+
+                            ttc_1_nl0[Nl] += Number(obj1.Total[index].C6);
+                            ttc1_1_nl0[Nl] += Number(obj1.Total[index].C6_1);
+
+                            ttv_1_nl0[Nl] += Number(obj1.Total[index].C9);
+                            ttv1_1_nl0[Nl] += Number(obj1.Total[index].C9_1);
+
+                            index++;
+                        }
+
+                        if (1 == nl_a95) {
+                            tt_a95 = myTableTotal;
+                            tt_a95 = tt_a95.replace(/{color}/g, "black");
+                            tt_a95 = tt_a95.replace(/{color_tt}/g, "blue");
+                            tt_a95 = tt_a95.replace("{tong_so}", "Tổng A95:");
+                            tt_a95 = tt_a95.replace("{tong_tien}", cash_format((ttc_1_nl0[A95_III] + ttc_1_nl0[A95_IV] + ttc_1_nl0[A95_V]) / 1000, ""));
+                            tt_a95 = tt_a95.replace("{tong_tien1}", cash_format((ttc1_1_nl0[A95_III] + ttc1_1_nl0[A95_IV] + ttc1_1_nl0[A95_V]) / 1000, ""));
+                            tt_a95 = tt_a95.replace("{tong_lit}", volume_format((ttv_1_nl0[A95_III] + ttv_1_nl0[A95_IV] + ttv_1_nl0[A95_V]) / 1000, ""));
+                            tt_a95 = tt_a95.replace("{tong_lit1}", volume_format((ttv1_1_nl0[A95_III] + ttv1_1_nl0[A95_IV] + ttv1_1_nl0[A95_V]) / 1000, ""));
+                        }
+
+                        if (1 == nl_e5) {
+                            tt_e5 = myTableTotal;
+                            tt_e5 = tt_e5.replace(/{color}/g, "black");
+                            tt_e5 = tt_e5.replace(/{color_tt}/g, "#11C7DA");
+                            tt_e5 = tt_e5.replace("{tong_so}", "Tổng E5:");
+                            tt_e5 = tt_e5.replace("{tong_tien}", cash_format(ttc_1_nl0[E5] / 1000, ""));
+                            tt_e5 = tt_e5.replace("{tong_tien1}", cash_format(ttc1_1_nl0[E5] / 1000, ""));
+                            tt_e5 = tt_e5.replace("{tong_lit}", volume_format(ttv_1_nl0[E5] / 1000, ""));
+                            tt_e5 = tt_e5.replace("{tong_lit1}", volume_format(ttv1_1_nl0[E5] / 1000, ""));
+                        }
+
+                        if (1 == nl_do) {
+                            tt_do = myTableTotal;
+                            tt_do = tt_do.replace(/{color}/g, "black");
+                            tt_do = tt_do.replace(/{color_tt}/g, "orange");
+                            tt_do = tt_do.replace("{tong_so}", "Tổng DO:");
+                            tt_do = tt_do.replace("{tong_tien}", cash_format((ttc_1_nl0[DO] + ttc_1_nl0[DO_II] + ttc_1_nl0[DO_V]) / 1000, ""));
+                            tt_do = tt_do.replace("{tong_tien1}", cash_format((ttc1_1_nl0[DO] + ttc1_1_nl0[DO_II] + ttc1_1_nl0[DO_V]) / 1000, ""));
+                            tt_do = tt_do.replace("{tong_lit}", volume_format((ttv_1_nl0[DO] + ttv_1_nl0[DO_II] + ttv_1_nl0[DO_V]) / 1000, ""));
+                            tt_do = tt_do.replace("{tong_lit1}", volume_format((ttv1_1_nl0[DO] + ttv1_1_nl0[DO_II] + ttv1_1_nl0[DO_V]) / 1000, ""));
+                        }
+
+                        if (1 == nl_ko) {
+                            tt_ko = myTableTotal;
+                            tt_ko = tt_ko.replace(/{color}/g, "black");
+                            tt_ko = tt_ko.replace(/{color_tt}/g, "#7030A0");
+                            tt_ko = tt_ko.replace("{tong_so}", "Tổng KO:");
+                            tt_ko = tt_ko.replace("{tong_tien}", cash_format(ttc_1_nl0[KO] / 1000, ""));
+                            tt_ko = tt_ko.replace("{tong_tien1}", cash_format(ttc1_1_nl0[KO] / 1000, ""));
+                            tt_ko = tt_ko.replace("{tong_lit}", volume_format(ttv_1_nl0[KO] / 1000, ""));
+                            tt_ko = tt_ko.replace("{tong_lit1}", volume_format(ttv1_1_nl0[KO] / 1000, ""));
+                        }
+
+                        tt = myTableTotal;
+                        tt = tt.replace(/{color}/g, "#11C7DA");
+                        tt = tt.replace(/{color_tt}/g, "#11C7DA");
+                        tt = tt.replace("{tong_so}", "Tổng ca bán 2:");
+                        tt = tt.replace("{tong_tien}", cash_format(ttc_1 / 1000, ""));
+                        tt = tt.replace("{tong_tien1}", cash_format(ttc1_1 / 1000, ""));
+                        tt = tt.replace("{tong_lit}", volume_format(ttv_1 / 1000, ""));
+                        tt = tt.replace("{tong_lit1}", volume_format(ttv1_1 / 1000, ""));
+                        document.getElementById('TablePump1').innerHTML = myTable + Rows + tt_a95 + tt_e5 + tt_do + tt_ko + tt;
+
+                        // time2
+                        // C1: Voi, C2: Nhiên liệu, C3: Serial
+                        // C4: Bắt đầu tiền, C5: kết thúc tiền, C6: tổng số tiền, C7: bắt đầu lít, C8: kết thúc lít, C9: Tổng số lượng
+                        // C4_1: Bắt đầu tiền, C5_1: kết thúc tiền, C6_1: tổng số tiền, C7_1: bắt đầu lít, C8_1: kết thúc lít, C9_1: Tổng số lượng
+                        var ttv_2_nl0 = [],
+                            ttv1_2_nl0 = [],
+                            ttc_2_nl0 = [],
+                            ttc1_2_nl0 = [];
+                        var ttv_2 = 0,
+                            ttv1_2 = 0,
+                            ttc_2 = 0,
+                            ttc1_2 = 0;
+                        Rows = "";
+                        tt_a95 = "", tt_a97 = "", tt_e5 = "", tt_do = "", tt_ko = "";
+                        nl_a95 = 0, nl_e5 = 0, nl_do = 0, nl_ko = 0;
+                        index = 0;
+                        for (var i = 0; i < FUEL_OIL_NUM; ++i) {
+                            ttv_2_nl0[i] = 0;
+                            ttv1_2_nl0[i] = 0;
+                            ttc_2_nl0[i] = 0;
+                            ttc1_2_nl0[i] = 0;
+                        }
+                        while (obj2.Total[index]) {
+                            Rows += myTableTr;
+                            Rows = Rows.replace("{voi}", obj2.Total[index].C1);
+                            //Nhiên liệu
+                            /*
+                            #define c_Black	"black"
+                            #define c_Green	"#92D14F"
+                            #define c_Blue	"blue"
+                            #define c_Orange	"orange"
+                            #define c_XanhLo	"#11C7DA"
+                            #define c_Tim	"#7030A0"
+                            #define c_E10	"#538DD5"
+                            */
+                            var Nl = obj2.Total[index].C2;
+                            if (Nl == 0) {
+                                Rows = Rows.replace("{nhienlieu}", "A92_II");
+                                Rows = Rows.replace("{color}", "#92D14F");
+                            } else if (Nl == 1) {
+                                Rows = Rows.replace("{nhienlieu}", "A95_III");
+                                Rows = Rows.replace("{color}", "blue");
+                                nl_a95 = 1;
+                            } else if (Nl == 2) {
+                                Rows = Rows.replace("{nhienlieu}", "A95_IV");
+                                Rows = Rows.replace("{color}", "blue");
+                                nl_a95 = 1;
+                            } else if (Nl == 3) {
+                                Rows = Rows.replace("{nhienlieu}", "E5");
+                                Rows = Rows.replace("{color}", "#11C7DA");
+                                nl_e5 = 1;
+                            } else if (Nl == 4) {
+                                Rows = Rows.replace("{nhienlieu}", "DO");
+                                Rows = Rows.replace("{color}", "orange");
+                                nl_do = 1;
+                            } else if (Nl == 5) {
+                                Rows = Rows.replace("{nhienlieu}", "DO_II");
+                                Rows = Rows.replace("{color}", "orange");
+                                nl_do = 1;
+                            } else if (Nl == 6) {
+                                Rows = Rows.replace("{nhienlieu}", "KO");
+                                Rows = Rows.replace("{color}", "#7030A0");
+                                nl_ko = 1;
+                            } else if (Nl == 7) {
+                                Rows = Rows.replace("{nhienlieu}", "DO_V");
+                                Rows = Rows.replace("{color}", "orange");
+                                nl_do = 1;
+                            } else if (Nl == 8) {
+                                Rows = Rows.replace("{nhienlieu}", "A95_V");
+                                Rows = Rows.replace("{color}", "blue");
+                                nl_do = 1;
+                            } else if (Nl == 9) {
+                                Rows = Rows.replace("{nhienlieu}", "A97_IV");
+                                Rows = Rows.replace("{color}", "#92D14F");
+                                nl_do = 1;
+                            } else if (Nl == 10) {
+                                Rows = Rows.replace("{nhienlieu}", "A97_V");
+                                Rows = Rows.replace("{color}", "#92D14F");
+                                nl_do = 1;
+                            } else {
+                                Rows = Rows.replace("{nhienlieu}", "Fail");
+                                Rows = Rows.replace("{color}", "black");
+                            }
+                            Rows = Rows.replace("{serial}", obj2.Total[index].C3);
+                            // <td>{batdau_t}</td>\
+                            // <td>{ketthuc_t}</td>\
+                            // <td>{tong_tien}</td>\
+                            // <td>{batdau_l}</td>\
+                            // <td>{ketthuc_l}</td>\
+                            // <td>{tong_lit}</td>\
+                            Rows = Rows.replace("{batdau_t}", cash_format(Number(obj2.Total[index].C4) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_t}", cash_format(Number(obj2.Total[index].C5) / 1000, ""));
+                            Rows = Rows.replace("{tong_tien}", cash_format(Number(obj2.Total[index].C6) / 1000, ""));
+                            Rows = Rows.replace("{batdau_l}", volume_format(Number(obj2.Total[index].C7) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_l}", volume_format(Number(obj2.Total[index].C8) / 1000, ""));
+                            Rows = Rows.replace("{tong_lit}", volume_format(Number(obj2.Total[index].C9) / 1000, ""));
+
+                            Rows = Rows.replace("{batdau_t1}", cash_format(Number(obj2.Total[index].C4_1) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_t1}", cash_format(Number(obj2.Total[index].C5_1) / 1000, ""));
+                            Rows = Rows.replace("{tong_tien1}", cash_format(Number(obj2.Total[index].C6_1) / 1000, ""));
+                            Rows = Rows.replace("{batdau_l1}", volume_format(Number(obj2.Total[index].C7_1) / 1000, ""));
+                            Rows = Rows.replace("{ketthuc_l1}", volume_format(Number(obj2.Total[index].C8_1) / 1000, ""));
+                            Rows = Rows.replace("{tong_lit1}", volume_format(Number(obj2.Total[index].C9_1) / 1000, ""));
+
+                            ttc_2 += Number(obj2.Total[index].C6);
+                            ttc1_2 += Number(obj2.Total[index].C6_1);
+
+                            ttv_2 += Number(obj2.Total[index].C9);
+                            ttv1_2 += Number(obj2.Total[index].C9_1);
+
+                            ttc_2_nl0[Nl] += Number(obj2.Total[index].C6);
+                            ttc1_2_nl0[Nl] += Number(obj2.Total[index].C6_1);
+
+                            ttv_2_nl0[Nl] += Number(obj2.Total[index].C9);
+                            ttv1_2_nl0[Nl] += Number(obj2.Total[index].C9_1);
+
+                            index++;
+                        }
+
+                        if (1 == nl_a95) {
+                            tt_a95 = myTableTotal;
+                            tt_a95 = tt_a95.replace(/{color}/g, "black");
+                            tt_a95 = tt_a95.replace(/{color_tt}/g, "blue");
+                            tt_a95 = tt_a95.replace("{tong_so}", "Tổng A95:");
+                            tt_a95 = tt_a95.replace("{tong_tien}", cash_format((ttc_2_nl0[A95_III] + ttc_2_nl0[A95_IV] + ttc_2_nl0[A95_V]) / 1000, ""));
+                            tt_a95 = tt_a95.replace("{tong_tien1}", cash_format((ttc1_2_nl0[A95_III] + ttc1_2_nl0[A95_IV] + ttc1_2_nl0[A95_V]) / 1000, ""));
+                            tt_a95 = tt_a95.replace("{tong_lit}", volume_format((ttv_2_nl0[A95_III] + ttv_2_nl0[A95_IV] + ttv_2_nl0[A95_V]) / 1000, ""));
+                            tt_a95 = tt_a95.replace("{tong_lit1}", volume_format((ttv1_2_nl0[A95_III] + ttv1_2_nl0[A95_IV] + ttv1_2_nl0[A95_V]) / 1000, ""));
+                        }
+
+                        if (1 == nl_e5) {
+                            tt_e5 = myTableTotal;
+                            tt_e5 = tt_e5.replace(/{color}/g, "black");
+                            tt_e5 = tt_e5.replace(/{color_tt}/g, "#11C7DA");
+                            tt_e5 = tt_e5.replace("{tong_so}", "Tổng E5:");
+                            tt_e5 = tt_e5.replace("{tong_tien}", cash_format(ttc_2_nl0[E5] / 1000, ""));
+                            tt_e5 = tt_e5.replace("{tong_tien1}", cash_format(ttc1_2_nl0[E5] / 1000, ""));
+                            tt_e5 = tt_e5.replace("{tong_lit}", volume_format(ttv_2_nl0[E5] / 1000, ""));
+                            tt_e5 = tt_e5.replace("{tong_lit1}", volume_format(ttv1_2_nl0[E5] / 1000, ""));
+                        }
+
+                        if (1 == nl_do) {
+                            tt_do = myTableTotal;
+                            tt_do = tt_do.replace(/{color}/g, "black");
+                            tt_do = tt_do.replace(/{color_tt}/g, "orange");
+                            tt_do = tt_do.replace("{tong_so}", "Tổng DO:");
+                            tt_do = tt_do.replace("{tong_tien}", cash_format((ttc_2_nl0[DO] + ttc_2_nl0[DO_II] + ttc_2_nl0[DO_V]) / 1000, ""));
+                            tt_do = tt_do.replace("{tong_tien1}", cash_format((ttc1_2_nl0[DO] + ttc1_2_nl0[DO_II] + ttc1_2_nl0[DO_V]) / 1000, ""));
+                            tt_do = tt_do.replace("{tong_lit}", volume_format((ttv_2_nl0[DO] + ttv_2_nl0[DO_II] + ttv_2_nl0[DO_V]) / 1000, ""));
+                            tt_do = tt_do.replace("{tong_lit1}", volume_format((ttv1_2_nl0[DO] + ttv1_2_nl0[DO_II] + ttv1_2_nl0[DO_V]) / 1000, ""));
+                        }
+
+                        if (1 == nl_ko) {
+                            tt_ko = myTableTotal;
+                            tt_ko = tt_ko.replace(/{color}/g, "black");
+                            tt_ko = tt_ko.replace(/{color_tt}/g, "#7030A0");
+                            tt_ko = tt_ko.replace("{tong_so}", "Tổng KO:");
+                            tt_ko = tt_ko.replace("{tong_tien}", cash_format(ttc_2_nl0[KO] / 1000, ""));
+                            tt_ko = tt_ko.replace("{tong_tien1}", cash_format(ttc1_2_nl0[KO] / 1000, ""));
+                            tt_ko = tt_ko.replace("{tong_lit}", volume_format(ttv_2_nl0[KO] / 1000, ""));
+                            tt_ko = tt_ko.replace("{tong_lit1}", volume_format(ttv1_2_nl0[KO] / 1000, ""));
+                        }
+
+                        tt = myTableTotal;
+                        tt = tt.replace(/{color}/g, "#11C7DA");
+                        tt = tt.replace(/{color_tt}/g, "#11C7DA");
+                        tt = tt.replace("{tong_so}", "Tổng ca bán 3:");
+                        tt = tt.replace("{tong_tien}", cash_format(ttc_2 / 1000, ""));
+                        tt = tt.replace("{tong_tien1}", cash_format(ttc1_2 / 1000, ""));
+                        tt = tt.replace("{tong_lit}", volume_format(ttv_2 / 1000, ""));
+                        tt = tt.replace("{tong_lit1}", volume_format(ttv1_2 / 1000, ""));
+
+                        /* Total */
+                        var tt3 = "",
+                            tt3_a95 = "",
+                            tt3_e5 = "",
+                            tt3_do = "",
+                            tt3_ko = "";
+
+                        if (1 == nl_a95) {
+                            tt3_a95 = myTableTotal;
+                            tt3_a95 = tt3_a95.replace(/{color}/g, "black");
+                            tt3_a95 = tt3_a95.replace(/{color_tt}/g, "blue");
+                            tt3_a95 = tt3_a95.replace("{tong_so}", "Tổng A95:");
+                            var ttc_a95_nl0 = ttc_2_nl0[A95_III] + ttc_2_nl0[A95_IV] + ttc_2_nl0[A95_V] + ttc_1_nl0[A95_III] + ttc_1_nl0[A95_IV] + ttc_1_nl0[A95_V] + ttc_nl0[A95_III] + ttc_nl0[A95_IV] + ttc_nl0[A95_V];
+                            var ttc1_a95_nl0 = ttc1_2_nl0[A95_III] + ttc1_2_nl0[A95_IV] + ttc1_2_nl0[A95_V] + ttc1_1_nl0[A95_III] + ttc1_1_nl0[A95_IV] + ttc1_1_nl0[A95_V] + ttc1_nl0[A95_III] + ttc1_nl0[A95_IV] + ttc1_nl0[A95_V];
+                            var ttv_a95_nl0 = ttv_2_nl0[A95_III] + ttv_2_nl0[A95_IV] + ttv_2_nl0[A95_V] + ttv_1_nl0[A95_III] + ttv_1_nl0[A95_IV] + ttv_1_nl0[A95_V] + ttv_nl0[A95_III] + ttv_nl0[A95_IV] + ttv_nl0[A95_V];
+                            var ttv1_a95_nl0 = ttv1_2_nl0[A95_III] + ttv1_2_nl0[A95_IV] + ttv1_2_nl0[A95_V] + ttv1_1_nl0[A95_III] + ttv1_1_nl0[A95_IV] + ttv1_1_nl0[A95_V] + ttv1_nl0[A95_III] + ttv1_nl0[A95_IV] + ttv1_nl0[A95_V];
+                            tt3_a95 = tt3_a95.replace("{tong_tien}", cash_format(ttc_a95_nl0 / 1000, ""));
+                            tt3_a95 = tt3_a95.replace("{tong_tien1}", cash_format(ttc1_a95_nl0 / 1000, ""));
+                            tt3_a95 = tt3_a95.replace("{tong_lit}", volume_format(ttv_a95_nl0 / 1000, ""));
+                            tt3_a95 = tt3_a95.replace("{tong_lit1}", volume_format(ttv1_a95_nl0 / 1000, ""));
+                        }
+
+                        if (1 == nl_e5) {
+                            tt3_e5 = myTableTotal;
+                            tt3_e5 = tt3_e5.replace(/{color}/g, "black");
+                            tt3_e5 = tt3_e5.replace(/{color_tt}/g, "#11C7DA");
+                            tt3_e5 = tt3_e5.replace("{tong_so}", "Tổng E5:");
+                            var ttc_e5_nl0 = ttc_2_nl0[E5] + ttc_1_nl0[E5] + ttc_nl0[E5];
+                            var ttc1_e5_nl0 = ttc1_2_nl0[E5] + ttc1_1_nl0[E5] + ttc1_nl0[E5];
+                            var ttv_e5_nl0 = ttv_2_nl0[E5] + ttv_1_nl0[E5] + ttv_nl0[E5];
+                            var ttv1_e5_nl0 = ttv1_2_nl0[E5] + ttv1_1_nl0[E5] + ttv1_nl0[E5];
+                            tt3_e5 = tt3_e5.replace("{tong_tien}", cash_format(ttc_e5_nl0 / 1000, ""));
+                            tt3_e5 = tt3_e5.replace("{tong_tien1}", cash_format(ttc1_e5_nl0 / 1000, ""));
+                            tt3_e5 = tt3_e5.replace("{tong_lit}", volume_format(ttv_e5_nl0 / 1000, ""));
+                            tt3_e5 = tt3_e5.replace("{tong_lit1}", volume_format(ttv1_e5_nl0 / 1000, ""));
+                        }
+
+                        if (1 == nl_do) {
+                            tt3_do = myTableTotal;
+                            tt3_do = tt3_do.replace(/{color}/g, "black");
+                            tt3_do = tt3_do.replace(/{color_tt}/g, "orange");
+                            tt3_do = tt3_do.replace("{tong_so}", "Tổng DO:");
+                            var ttc_do_nl0 = ttc_2_nl0[DO] + ttc_2_nl0[DO_II] + ttc_2_nl0[DO_V] +
+                                ttc_1_nl0[DO] + ttc_1_nl0[DO_II] + ttc_1_nl0[DO_V] +
+                                ttc_nl0[DO] + ttc_nl0[DO_II] + ttc_nl0[DO_V];
+                            var ttc1_do_nl0 = ttc1_2_nl0[DO] + ttc1_2_nl0[DO_II] + ttc1_2_nl0[DO_V] +
+                                ttc1_1_nl0[DO] + ttc1_1_nl0[DO_II] + ttc1_1_nl0[DO_V] +
+                                ttc1_nl0[DO] + ttc1_nl0[DO_II] + ttc1_nl0[DO_V];
+                            var ttv_do_nl0 = ttv_2_nl0[DO] + ttv_2_nl0[DO_II] + ttv_2_nl0[DO_V] +
+                                ttv_1_nl0[DO] + ttv_1_nl0[DO_II] + ttv_1_nl0[DO_V] +
+                                ttv_nl0[DO] + ttv_nl0[DO_II] + ttv_nl0[DO_V];
+                            var ttv1_do_nl0 = ttv1_2_nl0[DO] + ttv1_2_nl0[DO_II] + ttv1_2_nl0[DO_V] +
+                                ttv1_1_nl0[DO] + ttv1_1_nl0[DO_II] + ttv1_1_nl0[DO_V] +
+                                ttv1_nl0[DO] + ttv1_nl0[DO_II] + ttv1_nl0[DO_V];
+                            tt3_do = tt3_do.replace("{tong_tien}", cash_format(ttc_do_nl0 / 1000, ""));
+                            tt3_do = tt3_do.replace("{tong_tien1}", cash_format(ttc1_do_nl0 / 1000, ""));
+                            tt3_do = tt3_do.replace("{tong_lit}", volume_format(ttv_do_nl0 / 1000, ""));
+                            tt3_do = tt3_do.replace("{tong_lit1}", volume_format(ttv1_do_nl0 / 1000, ""));
+                        }
+
+                        if (1 == nl_ko) {
+                            tt3_ko = myTableTotal;
+                            tt3_ko = tt3_ko.replace(/{color}/g, "black");
+                            tt3_ko = tt3_ko.replace(/{color_tt}/g, "#7030A0");
+                            tt3_ko = tt3_ko.replace("{tong_so}", "Tổng KO:");
+                            var ttc_ko_nl0 = ttc_2_nl0[KO] + ttc_1_nl0[KO] + ttc_nl0[KO];
+                            var ttc1_ko_nl0 = ttc1_2_nl0[KO] + ttc1_1_nl0[KO] + ttc1_nl0[KO];
+                            var ttv_ko_nl0 = ttv_2_nl0[KO] + ttv_1_nl0[KO] + ttv_nl0[KO];
+                            var ttv1_ko_nl0 = ttv1_2_nl0[KO] + ttv1_1_nl0[KO] + ttv1_nl0[KO];
+                            tt3_ko = tt3_ko.replace("{tong_tien}", cash_format(ttc_ko_nl0 / 1000, ""));
+                            tt3_ko = tt3_ko.replace("{tong_tien1}", cash_format(ttc1_ko_nl0 / 1000, ""));
+                            tt3_ko = tt3_ko.replace("{tong_lit}", volume_format(ttv_ko_nl0 / 1000, ""));
+                            tt3_ko = tt3_ko.replace("{tong_lit1}", volume_format(ttv1_ko_nl0 / 1000, ""));
+                        }
+
+                        tt3 = myTableTotal;
+                        tt3 = tt3.replace(/{color}/g, "#ff5722");
+                        tt3 = tt3.replace(/{color_tt}/g, "#ff5722");
+                        tt3 = tt3.replace("{tong_so}", "Tổng số lượng trạm:");
+                        tt3 = tt3.replace("{tong_tien}", cash_format((ttc_2 + ttc_1 + ttc) / 1000, ""));
+                        tt3 = tt3.replace("{tong_tien1}", cash_format((ttc1_2 + ttc1_1 + ttc1) / 1000, ""));
+                        tt3 = tt3.replace("{tong_lit}", volume_format((ttv_2 + ttv_1 + ttv) / 1000, ""));
+                        tt3 = tt3.replace("{tong_lit1}", volume_format((ttv1_2 + ttv1_1 + ttv1) / 1000, ""));
+
+                        var row_space = myTable_space;
+                        row_space = row_space.replace(/{text}/g, "");
+                        row_space = row_space.replace(/{border}/g, "lB rB");
+                        row_space = row_space.replace(/{color}/g, "#ffffff");
+
+                        var row_tt = myTable_space;
+                        row_tt = row_tt.replace(/{text}/g, "Tổng Số Lượng Trạm");
+                        row_tt = row_tt.replace(/{border}/g, "lB rB tB");
+                        row_tt = row_tt.replace(/{color}/g, "#ff5722");
+
+                        document.getElementById('TablePump2').innerHTML = myTable + Rows + tt_a95 + tt_e5 + tt_do + tt_ko + tt +
+                            row_space + row_tt + tt3_a95 + tt3_e5 + tt3_do + tt3_ko + tt3;
+                    });
+                });
+            });
+        }
+
+        var CntClickM0 = 0;
+        var CntClickM1 = 0;
+        var TimeoutM0 = setTimeout(function() {
+            CntClickM0 = 0;
+        }, 3000);
+        var TimeoutM1 = setTimeout(function() {
+            CntClickM1 = 0;
+        }, 3000);
+
+        function upload_log() {
+            clearTimeout(TimeoutM0);
+            TimeoutM0 = setTimeout(function() {
+                CntClickM0 = 0;
+            }, 3000);
+            if (++CntClickM0 == 2) {
+                CntClickM0 = 0;
+                window.open("/upload_log.htm");
+            }
+        }
+
+        function delect_log(element) {
+            clearTimeout(TimeoutM1);
+            TimeoutM1 = setTimeout(function() {
+                CntClickM1 = 0;
+            }, 3000);
+            if (++CntClickM1 == 3) {
+                CntClickM1 = 0;
+                var table = document.getElementById('TablePump');
+                var row = element.parentNode.rowIndex;
+                var Serial = table.rows[row].cells[2].innerHTML;
+                //confirm ?
+                var sLenght = Serial.length;
+                if (sLenght == 1) {
+                    Serial = "000000" + Serial;
+                } else if (sLenght == 2) {
+                    Serial = "00000" + Serial;
+                } else if (sLenght == 3) {
+                    Serial = "0000" + Serial;
+                } else if (sLenght == 4) {
+                    Serial = "000" + Serial;
+                } else if (sLenght == 5) {
+                    Serial = "00" + Serial;
+                } else if (sLenght == 6) {
+                    Serial = "0" + Serial;
+                }
+                Serial += ".csv";
+                console.log(Serial);
+                if (confirm("Xóa file " + Serial) == false) return;
+
+                client.delect('/edit_sdfs', "path=/" + pump_log_name_prefix + "_" + Serial, function(response) {
+                    console.log(response);
+                    alert("Xóa file " + Serial + " OK");
+                });
+            }
+        }
+
+        function download_log(element) {
+            var table = document.getElementById('TablePump');
+            var row = element.parentNode.rowIndex;
+            var Serial = table.rows[row].cells[2].innerHTML;
+            //confirm ?
+            var sLenght = Serial.length;
+            if (sLenght == 1) {
+                Serial = "000000" + Serial;
+            } else if (sLenght == 2) {
+                Serial = "00000" + Serial;
+            } else if (sLenght == 3) {
+                Serial = "0000" + Serial;
+            } else if (sLenght == 4) {
+                Serial = "000" + Serial;
+            } else if (sLenght == 5) {
+                Serial = "00" + Serial;
+            } else if (sLenght == 6) {
+                Serial = "0" + Serial;
+            }
+            Serial += ".csv";
+            console.log(Serial);
+            window.open("/edit_sdfs?download=/" + pump_log_name_prefix + "_" + Serial);
+        }
+
+        var passPumpInfo;
+
+        function SearchLog() {
+            var table = document.getElementById('SearchInfo');
+            var d_start = Number(table.rows[1].cells[1].children[0].value);
+            var d_stop = Number(table.rows[1].cells[3].children[0].value);
+            var t_start = Number(table.rows[1].cells[2].children[0].value);
+            var t_stop = Number(table.rows[1].cells[4].children[0].value);
+            var table1 = document.getElementById('SearchInfo1');
+            var d_start1 = Number(table1.rows[1].cells[1].children[0].value);
+            var d_stop1 = Number(table1.rows[1].cells[3].children[0].value);
+            var t_start1 = Number(table1.rows[1].cells[2].children[0].value);
+            var t_stop1 = Number(table1.rows[1].cells[4].children[0].value);
+            var table2 = document.getElementById('SearchInfo2');
+            var d_start2 = Number(table2.rows[1].cells[1].children[0].value);
+            var d_stop2 = Number(table2.rows[1].cells[3].children[0].value);
+            var t_start2 = Number(table2.rows[1].cells[2].children[0].value);
+            var t_stop2 = Number(table2.rows[1].cells[4].children[0].value);
+            GetTotalinfo(passPumpInfo, d_start, d_stop, t_start, t_stop,
+                d_start1, d_stop1, t_start1, t_stop1,
+                d_start2, d_stop2, t_start2, t_stop2
+            );
+        }
+
+        function onBodyLoad() {
+            passPumpInfo = prompt("Please enter your pass");
+            if (passPumpInfo == null) return;
+
+            client.get('/get?param_wifi=search_time', function(response) {
+                console.log(response);
+                var obj = JSON.parse(response);
+                var t_start = obj.t_start;
+                var t_stop = obj.t_stop;
+                var t_start1 = obj.t_start1;
+                var t_stop1 = obj.t_stop1;
+                var t_start2 = obj.t_start2;
+                var t_stop2 = obj.t_stop2;
+
+                // date start, day stop, time start, time stop
+                // GetTotalinfo(passPumpInfo, 190520, 190520, 165915, 210739);
+                //"Fri Jan 26 2018 12:14:52 GMT+0700 (SE Asia Standard Time)"
+                var today = new Date();
+                var yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                //ddmmyy
+                var date_start;
+                if (t_start >= 180000) {
+                    date_start = yesterday.getDate() * 10000 + (yesterday.getMonth() + 1) * 100 + yesterday.getFullYear() % 100;
+                } else {
+                    date_start = today.getDate() * 10000 + (today.getMonth() + 1) * 100 + today.getFullYear() % 100;
+                }
+
+                //hhmmss
+                // var time_start = yesterday.getHours()*10000 + yesterday.getMinutes()*100 + yesterday.getSeconds();
+                var time_start = t_start;
+                //ddmmyy
+                var date_stop = today.getDate() * 10000 + (today.getMonth() + 1) * 100 + today.getFullYear() % 100;
+                //hhmmss
+                // var time_stop = today.getHours()*10000 + today.getMinutes()*100 + today.getSeconds();
+                var time_stop = t_stop;
+
+                //ddmmyy
+                var date_start1 = yesterday.getDate() * 10000 + (yesterday.getMonth() + 1) * 100 + yesterday.getFullYear() % 100;
+                //hhmmss
+                // var time_start = yesterday.getHours()*10000 + yesterday.getMinutes()*100 + yesterday.getSeconds();
+                var time_start1 = t_start1;
+                //ddmmyy
+                var date_stop1 = today.getDate() * 10000 + (today.getMonth() + 1) * 100 + today.getFullYear() % 100;
+                //hhmmss
+                // var time_stop = today.getHours()*10000 + today.getMinutes()*100 + today.getSeconds();
+                var time_stop1 = t_stop1;
+
+                //ddmmyy
+                var date_start2 = yesterday.getDate() * 10000 + (yesterday.getMonth() + 1) * 100 + yesterday.getFullYear() % 100;
+                //hhmmss
+                // var time_start = yesterday.getHours()*10000 + yesterday.getMinutes()*100 + yesterday.getSeconds();
+                var time_start2 = t_start2;
+                //ddmmyy
+                var date_stop2 = today.getDate() * 10000 + (today.getMonth() + 1) * 100 + today.getFullYear() % 100;
+                //hhmmss
+                // var time_stop = today.getHours()*10000 + today.getMinutes()*100 + today.getSeconds();
+                var time_stop2 = t_stop2;
+
+                GetTotalinfo(passPumpInfo, date_start, date_stop, time_start, time_stop,
+                    date_stop1, date_stop1, time_start1, time_stop1,
+                    date_stop2, date_stop2, time_start2, time_stop2,
+                );
+            });
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()" id="Body">
+</body>
+
+</html>

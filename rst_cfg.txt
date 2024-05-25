@@ -1,0 +1,7 @@
+{
+    "heap_Offset": 15360,
+    "timeoutReset": 30,
+    "intervalTick": 5,
+    "timeoutStart": 90,
+    "enable": true
+}

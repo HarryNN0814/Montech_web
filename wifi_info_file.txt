@@ -1,0 +1,103 @@
+{
+  "log_time": {
+    "t_start": 210000,
+    "t_stop": 50000,
+    "t_start1": 50000,
+    "t_stop1": 130000,
+    "t_start2": 130000,
+    "t_stop2": 210000
+  },
+  "probe_time": {
+    "t_start1": 210000,
+    "t_stop1": 50000,
+    "t_start2": 50000,
+    "t_stop2": 130000,
+    "t_start3": 130000,
+    "t_stop3": 210000
+  },
+  "i2c_para": {
+    "addr": 1023,
+    "sync_time": 333
+  },
+  "port": {
+    "udp": 25123,
+    "tcp": 25123,
+    "ws": 25124
+  },
+  "device": {
+    "name": "CỬA HÀNG XĂNG DẦU SỐ 1",
+    "addr": "200 Cộng Hòa, Phường 15, Quận Tân Bình, Tp HCM",
+    "tell": "0983497310"
+  },
+  "auth": {
+    "user": "admin",
+    "pass": "admin"
+  },
+  "auth_user": {
+    "user": "admin",
+    "pass": "12345"
+  },
+  "confirm": [
+    1234,
+    1234,
+    1234,
+    1234,
+    1234
+  ],
+  "sta": {
+    "ip": "192.168.1.203",
+    "gw": "192.168.1.1",
+    "sn": "255.255.255.0",
+    "dns": "8.8.8.8",
+    "ssid": "Montech Master 2.4G",
+    "psk": "77997799",
+    "hostname": "tienhuyiot",
+    "dhcp": 0,
+    "disable": 0,
+    "smart_cfg": 0
+  },
+  "ap": {
+    "ip": "192.168.4.1",
+    "sn": "255.255.255.0",
+    "ssid": "MONTECH",
+    "psk": "88888888",
+    "dns_name": "tienhuyiot.vn",
+    "disable": 0,
+    "hidden": 0,
+    "channel": 2
+  },
+  "ddns": {
+    "service": "noip",
+    "domain": "tienhuyiot.vn",
+    "user": "admin",
+    "pass": "admin",
+    "sync_time": 120,
+    "disable": 1,
+    "ipUrl": "ifconfig.me/ip"
+  },
+  "sntp": {
+    "server1": "pool.ntp.org",
+    "server2": "time.nist.gov",
+    "server3": "time.windows.com",
+    "TzTime": "<+07>-7",
+    "gmtOffset": 7,
+    "daylightOffset": 0,
+    "interval": 3600
+  },
+  "ping": [
+    {
+      "host": "gateway",
+      "timeout": 120,
+      "interval": 30,
+      "type": 1,
+      "enable": true
+    },
+    {
+      "host": "google.com",
+      "timeout": 120,
+      "interval": 30,
+      "type": 0,
+      "enable": false
+    }
+  ]
+}

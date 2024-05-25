@@ -1,0 +1,153 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Pu Information</title>
+    <link rel="stylesheet" href="/mystyle.css">
+    <script src="/myscripts.js"></script>
+    <script>
+        var BodyHome = "<div style=\"text-align:left;display:inline-block;min-width:260px;\">\
+		<h3 style=\"text-align:center; color: green;margin: 5px;margin-left: 0;padding-left: 0;\">{ten}</h3>\
+		<br>\
+		<table border=\"1\" id=\"TablePu3\" width=\"100%\">\
+		</table>\
+	</div>";
+
+        var myTable = "<tr>\
+					<th onclick='ChangeAuth();'>No.Pump</th>\
+					<th>Meterial</th>\
+					<th>Cash</th>\
+					<th>Volume</th>\
+					<th>Count</th>\
+					<th onclick='Set3pu(this,255);'>FnP</th>\
+					<th onclick='GetPu(pass3pu);'>Remain</th>\
+					</tr>";
+
+        var myTableTr = "<tr>\
+					<td>{voi}</td>\
+					<td style=\"color: {color};\">-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td onclick='Set3pu(this,0);'>-</td>\
+					<td>-</td>\
+					</tr>";
+
+        function ChangeAuth() {
+            window.open("/3puauth.htm");
+        }
+
+        var TimeoutSet3Pu = setTimeout(3000);
+        var CntSet3Pu = 0;
+
+        function Set3pu(element, Mode) {
+            clearTimeout(TimeoutSet3Pu);
+            TimeoutSet3Pu = setTimeout(function() {
+                CntSet3Pu = 0;
+            }, 3000);
+            if (++CntSet3Pu < 3) return;
+            CntSet3Pu = 0;
+            var Prom = "";
+            var table = document.getElementById('TablePu3');
+            var row = element.parentNode.rowIndex;
+            var Pump = table.rows[row].cells[0].innerHTML;
+            if (Mode == 255) {
+                Pump = 255;
+                Prom = "All";
+            } else Prom = Pump;
+            Pu = prompt("Please enter your value (" + Prom + ")");
+            if (Pu == null) return;
+            var myJSON = {
+                "Pump": 2,
+                "Pu": 1
+            };
+            myJSON.Pump = Number(Pump);
+            myJSON.Pu = Number(Pu);
+            var StrJSON = JSON.stringify(myJSON);
+            console.log(StrJSON);
+            client.post("/post", "set3pu=" + StrJSON, function(response) {
+                alert(response);
+            });
+        }
+
+        var pass3pu = "";
+
+        function GetPu(Pass) {
+            //load data
+            client.get('/get?param_wifi=get3pu&Pass=' + Pass, function(response) {
+                console.log(response);
+                var obj = JSON.parse(response);
+                if (obj.St && obj.St == "Error") onBodyLoad();
+                var BodyHtml = BodyHome;
+                BodyHtml = BodyHtml.replace("{ten}", "Information table");
+                document.getElementById('Body').innerHTML = BodyHtml;
+                var Rows = "";
+                var i = 0;
+                while (obj.Pu3[i]) {
+                    var r = "";
+                    r += myTableTr;
+                    r = r.replace("{voi}", obj.Pu3[i].Pump);
+                    //Nhiên liệu
+                    var Nl = obj.Pu3[i].Nl;
+                    if (Nl == 0) {
+                        r = r.replace("-", "A92_II");
+                        r = r.replace("{color}", "#92D14F");
+                    } else if (Nl == 1) {
+                        r = r.replace("-", "A95_III");
+                        r = r.replace("{color}", "blue");
+                    } else if (Nl == 2) {
+                        r = r.replace("-", "A95_IV");
+                        r = r.replace("{color}", "blue");
+                    } else if (Nl == 3) {
+                        r = r.replace("-", "E5");
+                        r = r.replace("{color}", "#11C7DA");
+                    } else if (Nl == 4) {
+                        r = r.replace("-", "DO");
+                        r = r.replace("{color}", "orange");
+                    } else if (Nl == 5) {
+                        r = r.replace("-", "DO_II");
+                        r = r.replace("{color}", "orange");
+                    } else if (Nl == 6) {
+                        r = r.replace("-", "KO");
+                        r = r.replace("{color}", "#7030A0");
+                    } else if (Nl == 7) {
+                        r = r.replace("-", "DO_V");
+                        r = r.replace("{color}", "orange");
+                    } else if (Nl == 8) {
+                        r = r.replace("-", "A95_V");
+                        r = r.replace("{color}", "blue");
+                    } else if (Nl == 9) {
+                        r = r.replace("-", "A97_IV");
+                        r = r.replace("{color}", "#92D14F");
+                    } else if (Nl == 10) {
+                        r = r.replace("-", "A97_V");
+                        r = r.replace("{color}", "#92D14F");
+                    } else {
+                        r = r.replace("-", "Fail");
+                        r = r.replace("{color}", "black");
+                    }
+                    r = r.replace("-", cash_format(Number(obj.Pu3[i].TTC3) / 1000, ""));
+                    r = r.replace("-", volume_format(Number(obj.Pu3[i].TTV3) / 1000, ""));
+                    r = r.replace("-", obj.Pu3[i].TTP3);
+                    r = r.replace("-", obj.Pu3[i].PU3);
+                    r = r.replace("-", volume_format(Number(obj.Pu3[i].OPPU3 - obj.Pu3[i].TTV3) / 1000, ""));
+                    i++;
+                    Rows += r;
+                }
+                document.getElementById('TablePu3').innerHTML = myTable + Rows;
+            });
+        }
+
+        function onBodyLoad() {
+            pass3pu = prompt("Please enter your pass");
+            if (pass3pu == null) return;
+            GetPu(pass3pu);
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()" id="Body">
+</body>
+
+</html>

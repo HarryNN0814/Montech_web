@@ -1,0 +1,68 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Cài Đặt Vòi</title>
+    <link rel="stylesheet" href="/mystyle.css">
+    <script src="/myscripts.js"></script>
+    <script>
+        var myI2CDeveice = 0;
+
+        function UpdateAdr(element) {
+            var table = document.getElementById('TableDevice');
+            var row = element.parentNode.parentNode.parentNode.rowIndex;
+            console.log("row: " + row.toString());
+
+            if (element.checked == true) myI2CDeveice |= (1 << row);
+            else myI2CDeveice &= ~(1 << row);
+        }
+
+        function save_cfg() {
+            var myJSON = {
+                "i2c_addr": 2
+            };
+            myJSON.i2c_addr = Number(myI2CDeveice);
+            var StrJSON = JSON.stringify(myJSON);
+            client.post('/post', "i2c_para_addr=" + StrJSON, function(response) {
+                // do something with response
+                alert(response);
+            });
+        }
+
+        var myTableDevice = "<tr>\
+            <td>Vòi {voi}</td>\
+            <td><label class=\"switch\"><input type=\"checkbox\" onclick=\"UpdateAdr(this)\" {check}><div class=\"slider round\"></div></label></td>\
+            </tr>";
+
+        function onBodyLoad() {
+            client.get('/get?param_wifi=i2c_para_addr', function(response) {
+                console.log(response);
+                var obj = JSON.parse(response);
+                myI2CDeveice = Number(obj.i2c_addr);
+                var Table = "";
+                var Rows = "";
+                var Index = 0;
+                while (Index < 20) {
+                    Rows = myTableDevice;
+                    Rows = Rows.replace("{voi}", Index + 1);
+                    if (myI2CDeveice & (1 << Index)) Rows = Rows.replace("{check}", "checked");
+                    else Rows = Rows.replace("{check}", "");
+                    Table += Rows;
+                    Index++;
+                }
+                document.getElementById('TableDevice').innerHTML = Table;
+            });
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()">
+    <div style="text-align:left;display:inline-block;min-width:260px;">
+        <h3 align="center">Cài Đặt Trạm Bơm</h3>
+        <table width="100%" id="TableDevice"></table>
+        <input type="button" onclick="save_cfg()" value="Save">
+    </div>
+</body>
+
+</html>

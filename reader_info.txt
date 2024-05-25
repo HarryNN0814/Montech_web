@@ -1,0 +1,102 @@
+[
+    {
+        "serial": 1,
+        "timeout": 300,
+        "enable": 1
+    },
+    {
+        "serial": 2,
+        "timeout": 300,
+        "enable": 1
+    },
+    {
+        "serial": 3,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 4,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 5,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 6,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 7,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 8,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 9,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 10,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 11,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 12,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 13,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 14,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 15,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 16,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 17,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 18,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 19,
+        "timeout": 300,
+        "enable": 0
+    },
+    {
+        "serial": 20,
+        "timeout": 300,
+        "enable": 0
+    }
+]

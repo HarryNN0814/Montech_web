@@ -1,0 +1,1063 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/mystyle.css">
+    <title>QLBH bằng thẻ</title>
+    <script src="/myscripts.js"></script>
+    <script>
+        var head_tr = "<tr>\
+<th>STT</th>\
+<th>Mã Thẻ</th>\
+<th>Biển Số Xe</th>\
+<th>Tổng Tiền Đã Bơm</th>\
+<th>Tổng Lít Đã Bơm</th>\
+<th style=\"color: {color};\">Tổng Tiền Nạp Thẻ</th>\
+<th style=\"color: {color};\">Tiền Dư Còn Lại</th>\
+<th>Tên Công Ty</th>\
+<th>Ghi Chú</th>\
+<th>Tải Về</th>\
+</tr>";
+        var card_tr = "<tr>\
+<td></td>\
+<td style=\"color: #00B0F0;\" onclick='card_info_page_edit(this);'></td>\
+<td></td>\
+<td></td>\
+<td></td>\
+<td style=\"color: {color};\"></td>\
+<td style=\"color: {color};\"></td>\
+<td></td>\
+<td></td>\
+<td style=\"color: #00B0F0;\" onclick='download_log(this);'><b>></b></td>\
+</tr>";
+        var total_tr = "<tr>\
+<td colspan='3' style=\"color: #14AFB4;\"><b>Tổng:</b></td>\
+<td style=\"color: #14AFB4;\"></td>\
+<td style=\"color: #14AFB4;\"></td>\
+<td style=\"color: #14AFB4;\"></td>\
+<td style=\"color: #14AFB4;\"></td>\
+<td></td>\
+<td></td>\
+<td></td>\
+</tr>";
+        var no_border_tr = "<tr>\
+<td colspan='10' class=\"{border}\" style=\"text-align: left;padding-left: 0;padding-bottom: 5; color: {color}; font-size: 11px;\">\
+<b>{text}</b>\
+</td></tr>";
+
+        var timeStart;
+        var timeStop;
+        var strTimeStart = "";
+        var strTimeStop = "";
+        var strStartDate = "";
+        var strStopDate = "";
+
+        var fileday_format;
+        var prepay_download_id = 0;
+        var postpaid_download_id = 0;
+        var download_timeout = setTimeout(25000);
+        var ws_timeout_num = 25000;
+        var ws_timeout = setTimeout(25000);
+        var ws = null;
+        var device_name = "";
+        var device_addr = "";
+        var ws_connected = 0;
+        var body_card_info = "";
+        var body_card_history = "";
+        var body_card_management = "";
+        var page_current = 0;
+        var json_info_page;
+        var json_history_page;
+        var json_manage_page;
+        var ws_data_manage_page;
+        var async_data_page;
+
+        var PAGE_CMD_CONNECT = 0;
+        var PAGE_CMD_RECEIVE_DATA = 1;
+        var PAGE_CMD_SEND_DATA = PAGE_CMD_RECEIVE_DATA;
+        var PAGE_CMD_REPLY_DATA = 2;
+        var PAGE_CMD_ASYNC_DATA = 3;
+        var PAGE_CMD_CONFIRM_DATA = 4;
+
+        var WS_PAGE_CARD_HISTORY = 10;
+        var WS_PAGE_MANAGE = 11;
+        var WS_PAGE_CARD_INFO = 12;
+        var WS_PAGE_CONNECTED = 100;
+
+        var CARD_PREPAY = 0;
+        var CARD_POSTPAID = 1;
+
+        var TAG_FILE_EDIT = 0;
+        var TAG_FILE_ADD = 1;
+        var TAG_FILE_DEL = 2;
+        var TAG_FILE_READ = 3;
+        var TAG_FILE_RESET = 4;
+        var TAG_FILE_RESET_ALL = 5;
+
+        var ASYNC_CARD_ENABLE = 1;
+        var ASYNC_CARD_DISABLE = 0;
+
+        function startSocket(port) {
+            ws = new WebSocket('ws://' + document.location.host + '/ws', ['arduino']);
+            ws.onopen = function() {
+                var yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                var date_start = yesterday.getDate() * 10000 + (yesterday.getMonth() + 1) * 100 + yesterday.getFullYear() % 100;
+
+                var today = new Date();
+                var date_stop = today.getDate() * 10000 + (today.getMonth() + 1) * 100 + today.getFullYear() % 100;
+
+                if (timeStart <= timeStop) {
+                    date_start = date_stop;
+                }
+
+                var myJSON = {
+                    "page": 1,
+                    "cmd": 0,
+                    "start": [0, 0],
+                    "stop": [0, 235959],
+                    "time_stamp": 12345
+                };
+                myJSON.page = WS_PAGE_MANAGE;
+                myJSON.cmd = PAGE_CMD_SEND_DATA;
+
+                myJSON.start[0] = date_start;
+                myJSON.start[1] = timeStart;
+                myJSON.stop[0] = date_stop;
+                myJSON.stop[1] = timeStop;
+                var StrJSON = JSON.stringify(myJSON);
+                ws.send(StrJSON);
+                console.log('Send: ', StrJSON);
+            };
+
+            ws.onerror = function(error) {
+                console.log('WebSocket Error ', error);
+            };
+
+            ws.onclose = function(close) {
+                console.log('WebSocket close ', close);
+                var ws_dis = document.getElementById('TableInfo');
+                ws_dis.rows[1].cells[2].innerHTML = "Đứt Kết Nối";
+                ws_dis.rows[1].cells[2].style.color = "red";
+                ws_connected = 0;
+            };
+
+            ws.onmessage = function(e) {
+                console.log('Length: ', e.data.length, '\nData: ', e.data);
+                var obj = JSON.parse(e.data);
+                ws_connected = obj.socket_num;
+
+                clearTimeout(ws_timeout);
+                ws_timeout = setTimeout(function() {
+                    console.log('Ws close');
+                    var ws_dis = document.getElementById('TableInfo');
+                    ws_dis.rows[1].cells[2].innerHTML = "Đứt Kết Nối";
+                    ws_dis.rows[1].cells[2].style.color = "red";
+                    ws_connected = 0;
+                    ws.close();
+                }, ws_timeout_num);
+
+                if (obj.page) {
+                    if (WS_PAGE_CARD_INFO == obj.page) {
+                        /* Backup info */
+                        json_info_page = obj;
+                        if (ASYNC_CARD_ENABLE == async_data_page) {
+                            if (WS_PAGE_CARD_INFO == page_current) {
+                                card_info_page_process(json_info_page);
+                            }
+                        } else {
+                            if (PAGE_CMD_REPLY_DATA == obj.cmd) {
+                                if (WS_PAGE_CARD_INFO == page_current) {
+                                    card_info_page_process(json_info_page);
+                                }
+                            }
+                        }
+                    } else if (WS_PAGE_MANAGE == obj.page) {
+                        if (jsonConcatCardManagePage(e.data) == false) {
+                            return;
+                        }
+                        /* Backup info */
+                        // json_manage_page = obj;
+                        // ws_data_manage_page = e.data;
+                        json_manage_page = JSON.parse(ws_data_manage_page);
+
+                        if (ASYNC_CARD_ENABLE == async_data_page) {
+                            if (WS_PAGE_MANAGE == page_current) {
+                                // manage_page_process(json_manage_page);
+                                managePageSearchCompanyAndLicensePlaces(json_manage_page);
+                            }
+                        }
+                    } else if (WS_PAGE_CARD_HISTORY == obj.page) {
+                        /* Backup info */
+                        json_history_page = obj;
+                        if (WS_PAGE_CARD_HISTORY == page_current) {
+                            history_page_process(json_history_page);
+                        }
+                    } else if (WS_PAGE_CONNECTED == obj.page) {
+                        var ws_con = document.getElementById('TableInfo');
+                        var connection_status = "Đã Kết Nối " + ws_connected;
+                        ws_con.rows[1].cells[2].innerHTML = connection_status;
+                        ws_con.rows[1].cells[2].style.color = "#92D14F";
+                    }
+                }
+            };
+        }
+
+        var total_receive = 0;
+        var jsonCardReaderIndex = 0;
+        var jsonCardReaderArray = [];
+
+        var WS_PAGE_MANAGE_STATUS_OK = 0;
+        var WS_PAGE_MANAGE_STATUS_FILE_NOT_EXIST = 1;
+        var WS_PAGE_MANAGE_STATUS_JSON_FAIL = 2;
+
+        function jsonConcatCardManagePage(json_in) {
+            var obj = JSON.parse(json_in);
+            if (0 == obj.file) {
+                // begin
+                jsonCardReaderIndex = 0;
+                total_receive = 0;
+            }
+            total_receive += obj.total_card;
+
+
+            console.log('total_receive: ', total_receive);
+            if (obj.status != WS_PAGE_MANAGE_STATUS_OK) {
+                var ws_con = document.getElementById('TableInfo');
+                var connection_status = "Đã Kết Nối " + ws_connected;
+                ws_con.rows[1].cells[2].innerHTML = connection_status;
+                ws_con.rows[1].cells[2].style.color = "#92D14F";
+
+                var objBegin = JSON.parse(jsonCardReaderArray[0]);
+                var prepayLenBegin = objBegin.prepay.length;
+                var postpaidLenBegin = objBegin.postpaid.length;
+                for (var i = 1; i < jsonCardReaderIndex; ++i) {
+                    var objCat = JSON.parse(jsonCardReaderArray[i]);
+
+                    var prepayLenCat = objCat.prepay.length;
+                    for (var j = 0; j < prepayLenCat; ++j) {
+                        objBegin.prepay[prepayLenBegin] = objCat.prepay[j];
+                        prepayLenBegin++;
+                    }
+
+                    var postpaidLenCat = objCat.postpaid.length;
+                    for (var j = 0; j < postpaidLenCat; ++j) {
+                        objBegin.postpaid[postpaidLenBegin] = objCat.postpaid[j];
+                        postpaidLenBegin++;
+                    }
+                }
+
+                var StrJSON = JSON.stringify(objBegin);
+                console.log('Json final: ', StrJSON);
+                ws_data_manage_page = StrJSON;
+                // End
+                return true;
+            } else { //WS_PAGE_MANAGE_STATUS_FILE_NOT_EXIST, WS_PAGE_MANAGE_STATUS_JSON_FAIL
+                var ws_con = document.getElementById('TableInfo');
+                var connection_status = "Đang Tải Dữ Liệu ";
+                ws_con.rows[1].cells[2].innerHTML = connection_status;
+                ws_con.rows[1].cells[2].style.color = "#92D14F";
+
+                jsonCardReaderArray[jsonCardReaderIndex] = json_in;
+                jsonCardReaderIndex++;
+
+                // to be continue
+                var myJSON = {
+                    "page": 11,
+                    "cmd": 4,
+                    "file": 1,
+                    "time_stamp": 12345
+                };
+                myJSON.page = WS_PAGE_MANAGE;
+                myJSON.cmd = PAGE_CMD_CONFIRM_DATA;
+                myJSON.file = obj.file + 1;
+
+                var StrJSON = JSON.stringify(myJSON);
+                ws.send(StrJSON);
+                console.log('Send: ', StrJSON);
+                return false;
+            }
+        }
+
+        function download_log(element) {
+            var table = document.getElementById('TablePayment');
+            var row = element.parentNode.rowIndex;
+            var uid = table.rows[row].cells[1].innerHTML;
+            var answer = confirm("Xác nhận tải dữ liệu thẻ " + uid);
+            if (!answer) return;
+            if (uid.length == 7) {
+                uid = "0" + uid;
+            }
+            if (uid == "0") {
+                uid = "00000000";
+            }
+            fileday_format = get_ddmmyy_format() + get_hhmmss_format();
+            var filename = fileday_format + "_" + uid + ".csv";
+            var file_download = uid + ".csv";
+            console.log(filename);
+            window.open("/edit_sdfs?download=/" + file_download + "&filename=" + filename);
+        }
+
+        function download_history_log() {
+            fileday_format = get_ddmmyy_format() + get_hhmmss_format();
+            var filename = fileday_format + "_lich_su_giao_dich.csv";
+            var file_download = "history_log.csv";
+            console.log(filename);
+            window.open("/edit_sdfs?download=/" + file_download + "&filename=" + filename);
+        }
+
+        function auto_download_log_all() {
+            if (confirm("Xác Nhận Tải Tất Cả Log") == false) return;
+            clearTimeout(download_timeout);
+            postpaid_download_id = 0;
+            prepay_download_id = 0;
+            fileday_format = get_ddmmyy_format() + get_hhmmss_format();
+            timeout_download_log_all();
+        }
+
+        function timeout_download_log_all() {
+            var obj = JSON.parse(ws_data_manage_page);
+            while (obj.prepay && obj.prepay[prepay_download_id]) {
+                var uid = obj.prepay[prepay_download_id].uid;
+                ++prepay_download_id;
+
+                if (uid.length == 7) {
+                    uid = "0" + uid;
+                }
+                if (uid == "0") {
+                    uid = "00000000";
+                }
+                var filename = fileday_format + "_" + uid + ".csv";
+                var file_download = uid + ".csv";
+                console.log(filename);
+                window.open("/edit_sdfs?download=/" + file_download + "&filename=" + filename);
+                download_timeout = setTimeout(timeout_download_log_all, 1000);
+                return;
+            }
+
+            while (obj.postpaid && obj.postpaid[postpaid_download_id]) {
+                var uid = obj.postpaid[postpaid_download_id].uid;
+                ++postpaid_download_id;
+
+                if (uid.length == 7) {
+                    uid = "0" + uid;
+                }
+                if (uid == "0") {
+                    uid = "00000000";
+                }
+                var filename = fileday_format + "_" + uid + ".csv";
+                var file_download = uid + ".csv";
+                console.log(filename);
+                window.open("/edit_sdfs?download=/" + file_download + "&filename=" + filename);
+                download_timeout = setTimeout(timeout_download_log_all, 1000);
+                return;
+            }
+
+            alert("HOÀN THÀNH TẢI LOG !!!!");
+        }
+
+        /*
+        {
+            "history":
+            [
+                {"da":yyyymmdd,"ti":hhMMss,"lp":"51G-29191","ca":200000,"vl":16200,"co":12345,"cp":"Montech","nt":"Xe 7 chỗ"}
+            ]
+        }
+        */
+        function history_page_process(obj) {
+            var tb_htr = document.getElementById('TableHistory');
+            var i = 0;
+            while (obj.history && obj.history[i]) {
+                var r = i + 1;
+                if (obj.history[i].da != 0) {
+                    tb_htr.rows[r].cells[1].innerHTML = date_num2str_reader(Number(obj.history[i].da));
+                    tb_htr.rows[r].cells[2].innerHTML = time_num2str(Number(obj.history[i].ti));
+                    tb_htr.rows[r].cells[3].innerHTML = obj.history[i].lp;
+                    tb_htr.rows[r].cells[4].innerHTML = cash_format(Number(obj.history[i].ca) / 1000, "");
+                    tb_htr.rows[r].cells[5].innerHTML = volume_format(Number(obj.history[i].vl) / 1000, "");
+                    tb_htr.rows[r].cells[6].innerHTML = cash_format(Number(obj.history[i].co) / 1000, "");
+                    tb_htr.rows[r].cells[7].innerHTML = obj.history[i].cp;
+                    tb_htr.rows[r].cells[8].innerHTML = obj.history[i].nt;
+                }
+                ++i;
+            }
+        }
+
+        function managePageSearchCompanyAndLicensePlaces(obj) {
+            var l_places = document.getElementById("lp_find").value;
+            l_places = l_places.toUpperCase();
+            var company = document.getElementById("lp_company").value;
+            company = company.toUpperCase();
+
+            var prepay_tr_num;
+            var postpaid_tr_num;
+
+            if (l_places.length > 0) {
+                console.log("Find license places: ", l_places);
+                prepay_tr_num = 0;
+                while (obj.prepay && obj.prepay[prepay_tr_num]) {
+                    var str = obj.prepay[prepay_tr_num].lp;
+                    str = str.toUpperCase();
+                    var n = str.indexOf(l_places);
+                    if (n == -1) {
+                        obj.prepay.splice(prepay_tr_num, 1);
+                        prepay_tr_num = 0;
+                    } else {
+                        ++prepay_tr_num;
+                    }
+                }
+
+                postpaid_tr_num = 0;
+                while (obj.postpaid && obj.postpaid[postpaid_tr_num]) {
+                    var str = obj.postpaid[postpaid_tr_num].lp;
+                    str = str.toUpperCase();
+                    var n = str.indexOf(l_places);
+                    if (n == -1) {
+                        obj.postpaid.splice(postpaid_tr_num, 1);
+                        postpaid_tr_num = 0;
+                    } else {
+                        ++postpaid_tr_num;
+                    }
+                }
+            }
+
+            if (company.length > 0) {
+                console.log("Find company: ", company);
+                prepay_tr_num = 0;
+                while (obj.prepay && obj.prepay[prepay_tr_num]) {
+                    var str = obj.prepay[prepay_tr_num].cp;
+                    str = str.toUpperCase();
+                    var n = str.indexOf(company);
+                    if (n == -1) {
+                        obj.prepay.splice(prepay_tr_num, 1);
+                        prepay_tr_num = 0;
+                    } else {
+                        ++prepay_tr_num;
+                    }
+                }
+
+                postpaid_tr_num = 0;
+                while (obj.postpaid && obj.postpaid[postpaid_tr_num]) {
+                    var str = obj.postpaid[postpaid_tr_num].cp;
+                    str = str.toUpperCase();
+                    var n = str.indexOf(company);
+                    if (n == -1) {
+                        obj.postpaid.splice(postpaid_tr_num, 1);
+                        postpaid_tr_num = 0;
+                    } else {
+                        ++postpaid_tr_num;
+                    }
+                }
+            }
+
+            var StrJSON = JSON.stringify(obj);
+            console.log('Run: managePageSearchCompanyAndLicensePlaces');
+
+            manage_page_process(obj);
+        }
+
+        function manage_page_search_process(obj) {
+            var l_places = document.getElementById("lp_find").value;
+            l_places = l_places.toUpperCase();
+            var prepay_tr_num = 0;
+            while (obj.prepay && obj.prepay[prepay_tr_num]) {
+                var str = obj.prepay[prepay_tr_num].lp;
+                str = str.toUpperCase();
+                var n = str.indexOf(l_places);
+                if (n == -1) {
+                    obj.prepay.splice(prepay_tr_num, 1);
+                    prepay_tr_num = 0;
+                } else {
+                    ++prepay_tr_num;
+                }
+            }
+
+            var postpaid_tr_num = 0;
+            while (obj.postpaid && obj.postpaid[postpaid_tr_num]) {
+                var str = obj.postpaid[postpaid_tr_num].lp;
+                str = str.toUpperCase();
+                var n = str.indexOf(l_places);
+                if (n == -1) {
+                    obj.postpaid.splice(postpaid_tr_num, 1);
+                    postpaid_tr_num = 0;
+                } else {
+                    ++postpaid_tr_num;
+                }
+            }
+
+            var StrJSON = JSON.stringify(obj);
+            console.log('Run: manage_page_search_process');
+
+            manage_page_process(obj);
+        }
+
+        function manage_page_search_company_process(obj) {
+            var l_places = document.getElementById("lp_company").value;
+            l_places = l_places.toUpperCase();
+            var prepay_tr_num = 0;
+            while (obj.prepay && obj.prepay[prepay_tr_num]) {
+                var str = obj.prepay[prepay_tr_num].cp;
+                str = str.toUpperCase();
+                var n = str.indexOf(l_places);
+                if (n == -1) {
+                    obj.prepay.splice(prepay_tr_num, 1);
+                    prepay_tr_num = 0;
+                } else {
+                    ++prepay_tr_num;
+                }
+            }
+
+            var postpaid_tr_num = 0;
+            while (obj.postpaid && obj.postpaid[postpaid_tr_num]) {
+                var str = obj.postpaid[postpaid_tr_num].cp;
+                str = str.toUpperCase();
+                var n = str.indexOf(l_places);
+                if (n == -1) {
+                    obj.postpaid.splice(postpaid_tr_num, 1);
+                    postpaid_tr_num = 0;
+                } else {
+                    ++postpaid_tr_num;
+                }
+            }
+
+            var StrJSON = JSON.stringify(obj);
+            console.log('Run: manage_page_search_company_process');
+
+            manage_page_process(obj);
+        }
+
+        /*
+        {
+            "prepay":
+            [
+                {"uid":"AABBCCDD","lp":"51G-29191","ca_tt":16200,"vl_tt":16200,"tu_tt":12345,"bl_tt":12345,"cp":"Montech","nt":"Xe 7 chỗ"}
+            ],
+            "postpaid":
+            [
+                {"uid":"AABBCCDD","lp":"51G-29191","ca_tt":16200,"vl_tt":16200,"cp":"Montech","nt":"Xe 7 chỗ"}
+            ]
+        }
+        */
+        function manage_page_process(obj) {
+            var StrJSON = JSON.stringify(obj);
+            // console.log('manage_page_process: ', StrJSON);
+            var prepay_tr_num = 0;
+            var pre_tr = "";
+            var prepay_tr = card_tr;
+            var prepay_th = head_tr;
+            prepay_tr = prepay_tr.replace(/{color}/g, "black");
+            prepay_th = prepay_th.replace(/{color}/g, "white");
+            while (obj.prepay && obj.prepay[prepay_tr_num]) {
+                pre_tr += prepay_tr;
+                ++prepay_tr_num;
+            }
+
+            var postpaid_tr_num = 0;
+            var post_tr = "";
+            var postpaid_tr = card_tr;
+            var postpaid_th = head_tr;
+            postpaid_tr = postpaid_tr.replace(/{color}/g, "gray");
+            postpaid_th = postpaid_th.replace(/{color}/g, "gray");
+            while (obj.postpaid && obj.postpaid[postpaid_tr_num]) {
+                post_tr += postpaid_tr;
+                ++postpaid_tr_num;
+            }
+
+            var row_title_prepay = no_border_tr;
+            row_title_prepay = row_title_prepay.replace(/{text}/g, "Thẻ Trả Trước");
+            row_title_prepay = row_title_prepay.replace(/{border}/g, "lB rB tB");
+            row_title_prepay = row_title_prepay.replace(/{color}/g, "#ff5722");
+            var tbl_pay = row_title_prepay + prepay_th + pre_tr + total_tr;
+
+            var row_title_postpaid = no_border_tr;
+            row_title_postpaid = row_title_postpaid.replace(/{text}/g, "Thẻ Trả Sau");
+            row_title_postpaid = row_title_postpaid.replace(/{border}/g, "lB rB");
+            row_title_postpaid = row_title_postpaid.replace(/{color}/g, "#ff5722");
+            tbl_pay += row_title_postpaid + postpaid_th + post_tr + total_tr;
+
+            document.getElementById('TablePayment').innerHTML = tbl_pay;
+
+            var tb_htr = document.getElementById('TablePayment');
+            var ca_tt = 0;
+            var vl_tt = 0;
+            var tu_tt = 0;
+            var bl_tt = 0;
+            var r;
+            for (var i = 0; i < prepay_tr_num; ++i) {
+                r = i + 2;
+                tb_htr.rows[r].cells[0].innerHTML = i + 1;
+                tb_htr.rows[r].cells[1].innerHTML = obj.prepay[i].uid;
+                tb_htr.rows[r].cells[2].innerHTML = obj.prepay[i].lp;
+                tb_htr.rows[r].cells[3].innerHTML = cash_format(Number(obj.prepay[i].ca_tt) / 1000, "");
+                tb_htr.rows[r].cells[4].innerHTML = volume_format(Number(obj.prepay[i].vl_tt) / 1000, "");
+                tb_htr.rows[r].cells[5].innerHTML = cash_format(Number(obj.prepay[i].tu_tt) / 1000, "");
+                tb_htr.rows[r].cells[6].innerHTML = cash_format(Number(obj.prepay[i].bl_tt) / 1000, "");
+                tb_htr.rows[r].cells[7].innerHTML = obj.prepay[i].cp;
+                tb_htr.rows[r].cells[8].innerHTML = obj.prepay[i].nt;
+
+                ca_tt += Number(obj.prepay[i].ca_tt);
+                vl_tt += Number(obj.prepay[i].vl_tt);
+                tu_tt += Number(obj.prepay[i].tu_tt);
+                bl_tt += Number(obj.prepay[i].bl_tt);
+            }
+            r = prepay_tr_num + 2;
+            tb_htr.rows[r].cells[1].innerHTML = "<b>" + cash_format(Number(ca_tt) / 1000, "") + "</b>";
+            tb_htr.rows[r].cells[2].innerHTML = "<b>" + volume_format(Number(vl_tt) / 1000, "") + "</b>";
+            tb_htr.rows[r].cells[3].innerHTML = "<b>" + cash_format(Number(tu_tt) / 1000, "") + "</b>";
+            tb_htr.rows[r].cells[4].innerHTML = "<b>" + cash_format(Number(bl_tt) / 1000, "") + "</b>";
+
+            ca_tt = 0;
+            vl_tt = 0;
+            tu_tt = 0;
+            bl_tt = 0;
+            for (var i = 0; i < postpaid_tr_num; ++i) {
+                r = i + 2 + prepay_tr_num + 3;
+                tb_htr.rows[r].cells[0].innerHTML = i + 1;
+                tb_htr.rows[r].cells[1].innerHTML = obj.postpaid[i].uid;
+                tb_htr.rows[r].cells[2].innerHTML = obj.postpaid[i].lp;
+                tb_htr.rows[r].cells[3].innerHTML = cash_format(Number(obj.postpaid[i].ca_tt) / 1000, "");
+                tb_htr.rows[r].cells[4].innerHTML = volume_format(Number(obj.postpaid[i].vl_tt) / 1000, "");
+                tb_htr.rows[r].cells[5].innerHTML = 0;
+                tb_htr.rows[r].cells[6].innerHTML = 0;
+                tb_htr.rows[r].cells[7].innerHTML = obj.postpaid[i].cp;
+                tb_htr.rows[r].cells[8].innerHTML = obj.postpaid[i].nt;
+
+                ca_tt += Number(obj.postpaid[i].ca_tt);
+                vl_tt += Number(obj.postpaid[i].vl_tt);
+            }
+            r = prepay_tr_num + 3 + postpaid_tr_num + 2;
+            tb_htr.rows[r].cells[1].innerHTML = "<b>" + cash_format(Number(ca_tt) / 1000, "") + "</b>";
+            tb_htr.rows[r].cells[2].innerHTML = "<b>" + volume_format(Number(vl_tt) / 1000, "") + "</b>";
+        }
+
+        function card_info_page_process(obj) {
+            if (0 == obj.status) {
+                alert(obj.mgs);
+                document.getElementById("rule").value = 0;
+                document.getElementById("uid").value = obj.uid;
+                document.getElementById("l_plates").value = "";
+                document.getElementById("company").value = "";
+                document.getElementById("note").value = "";
+                document.getElementById("topup_total").value = 0;
+                document.getElementById("balance").value = 0;
+                document.getElementById("top_up").value = 0;
+                document.getElementById("f_top_up").value = 0;
+                document.getElementById("card_enable").checked = 0;
+                document.getElementById("db_cmd").value = 100;
+                document.getElementById('top_up').readOnly = false;
+                document.getElementById('f_top_up').disabled = false;
+            } else {
+                document.getElementById("rule").value = obj.rule;
+                document.getElementById("uid").value = obj.uid;
+                document.getElementById("l_plates").value = obj.l_plates;
+                document.getElementById("company").value = obj.company;
+                document.getElementById("note").value = obj.note;
+                document.getElementById("topup_total").value = obj.topup_total;
+                document.getElementById("top_up").value = 0;
+                document.getElementById("f_top_up").value = 0;
+                document.getElementById("card_enable").checked = obj.card_enable;
+                document.getElementById("db_cmd").value = obj.db_cmd;
+
+                if (CARD_POSTPAID == obj.rule) {
+                    document.getElementById('top_up').readOnly = true;
+                    document.getElementById('f_top_up').disabled = true;
+                    document.getElementById('total_text').innerHTML = "<b>Tổng Tiền Nợ</b>";
+                    document.getElementById("balance").value = 0;
+                } else {
+                    document.getElementById('top_up').readOnly = false;
+                    document.getElementById('f_top_up').disabled = false;
+                    document.getElementById('total_text').innerHTML = "<b>Tổng Tiền Nạp Thẻ</b>";
+                    document.getElementById("balance").value = obj.balance;
+                }
+
+                if (TAG_FILE_RESET_ALL == obj.db_cmd) {
+                    alert(obj.mgs);
+                }
+            }
+
+            if (TAG_FILE_ADD == obj.db_cmd) {
+                document.getElementById('rule').disabled = false;
+                document.getElementById("db_cmd").value = 1;
+            } else {
+                document.getElementById('rule').disabled = true;
+            }
+        }
+
+        function card_info_submit() {
+            if (document.getElementById("db_cmd").value == 100) return;
+            if (document.getElementById("db_cmd").value == TAG_FILE_RESET) {
+                var answer = confirm("**** CHÚ Ý: XÁC NHẬN RESET THẺ ****");
+                if (!answer) return;
+            }
+
+            if (document.getElementById("db_cmd").value == TAG_FILE_RESET_ALL) {
+                var answer = confirm("!!!! CHÚ Ý: XÁC NHẬN RESET TẤT CẢ THẺ !!!!");
+                if (!answer) return;
+            } else {
+                if (document.getElementById("uid").value.length < 7) {
+                    alert("Lỗi mã thẻ");
+                    return;
+                }
+
+                if (document.getElementById("db_cmd").value != TAG_FILE_READ) {
+                    if (document.getElementById("l_plates").value.length < 5) {
+                        alert("Lỗi Biển Số");
+                        return;
+                    }
+                } else {
+                    if (document.getElementById("top_up").value != 0 ||
+                        document.getElementById("f_top_up").value != 0) {
+                        alert("Chọn \"Chỉnh Sửa Thẻ\" để nạp tiền");
+                        return;
+                    }
+                }
+            }
+
+            if (document.getElementById("db_cmd").value != TAG_FILE_READ) {
+                var answer1 = confirm("Xác nhận cập nhật dữ liệu");
+                if (!answer1) return;
+            }
+
+            // {"page":1,"cmd":1,"rule":1,"uid":"AABBCCFF","company":"Montech","note":"note"
+            // ,"l_plates":"76C1-26415","total":1000000,
+            // "balance":500000,"top_up":1000000,"card_enable":1,"db_cmd":2,"time_stamp":12345}
+            var myJSON = {
+                "page": 1
+            };
+            myJSON.page = WS_PAGE_CARD_INFO;
+            myJSON.cmd = PAGE_CMD_SEND_DATA;
+            myJSON.uid = document.getElementById("uid").value;
+            myJSON.rule = Number(document.getElementById("rule").value);
+            myJSON.l_plates = document.getElementById("l_plates").value;
+            myJSON.company = document.getElementById("company").value;
+            myJSON.note = document.getElementById("note").value;
+            myJSON.topup_total = Number(document.getElementById("topup_total").value);
+            myJSON.balance = Number(document.getElementById("balance").value);
+            myJSON.top_up = Number(document.getElementById("top_up").value);
+            myJSON.top_up += Number(document.getElementById("f_top_up").value);
+            myJSON.card_enable = Number(document.getElementById("card_enable").checked);
+            myJSON.db_cmd = Number(document.getElementById("db_cmd").value);
+            myJSON.time_stamp = 12345;
+            var StrJSON = JSON.stringify(myJSON);
+            ws.send(StrJSON);
+            console.log('Send: ', StrJSON);
+        }
+
+        function history_page() {
+            window.location = "/home.htm";
+        }
+
+        function history_page_original() {
+            var connection_status;
+            var color;
+            if (0 == ws_connected) {
+                connection_status = "Đứt Kết Nối";
+                color = "red";
+            } else {
+                connection_status = "Đang Kết Nối " + ws_connected;
+                color = "#92D14F";
+            }
+
+            var BodyHtml = body_card_history;
+            page_current = WS_PAGE_CARD_HISTORY;
+            async_data_page = ASYNC_CARD_ENABLE;
+            BodyHtml = BodyHtml.replace("{ten}", device_name);
+            BodyHtml = BodyHtml.replace("{dia chi}", device_addr);
+            BodyHtml = BodyHtml.replace("{ket noi}", connection_status);
+            BodyHtml = BodyHtml.replace("{color}", color);
+            document.getElementById('Body').innerHTML = BodyHtml;
+            if (json_history_page) {
+                history_page_process(json_history_page);
+            } else {
+                var myJSON = {
+                    "page": 1,
+                    "cmd": 0,
+                    "time_stamp": 12345
+                };
+                myJSON.page = WS_PAGE_CARD_HISTORY;
+                myJSON.cmd = PAGE_CMD_CONNECT;
+                var StrJSON = JSON.stringify(myJSON);
+                ws.send(StrJSON);
+                console.log('Send: ', StrJSON);
+            }
+        }
+
+        function loadPageTimeStampFind() {
+            window.open("./time_stamp_find.htm");
+        }
+
+        function SearchLog() {
+            var TableManagement = document.getElementById('TableManagement');
+            var dStart = TableManagement.rows[2].cells[1].children[0].value;
+            var tStart = TableManagement.rows[2].cells[2].children[0].value;
+            var dStop = TableManagement.rows[2].cells[3].children[0].value;
+            var tStop = TableManagement.rows[2].cells[4].children[0].value;
+
+            if (dStart == strStartDate && tStart == strTimeStart &&
+                dStop == strStopDate && tStop == strTimeStop) {
+                console.log('search log in cache');
+                json_manage_page = JSON.parse(ws_data_manage_page);
+                managePageSearchCompanyAndLicensePlaces(json_manage_page);
+                return;
+            }
+
+            strStartDate = dStart;
+            strTimeStart = tStart;
+            strStopDate = dStop;
+            strTimeStop = tStop;
+
+            if (json_manage_page) {
+                var myJSON = {
+                    "page": 1,
+                    "cmd": 0,
+                    "start": [0, 0],
+                    "stop": [0, 235959],
+                    "time_stamp": 12345
+                };
+                myJSON.page = WS_PAGE_MANAGE;
+                myJSON.cmd = PAGE_CMD_SEND_DATA;
+
+                myJSON.start[0] = dStart;
+                myJSON.start[1] = tStart;
+                myJSON.stop[0] = dStop;
+                myJSON.stop[1] = tStop;
+                myJSON.cmd = PAGE_CMD_SEND_DATA;
+                var StrJSON = JSON.stringify(myJSON);
+
+                async_data_page = ASYNC_CARD_ENABLE;
+                ws.send(StrJSON);
+                console.log('Send: ', StrJSON);
+            }
+        }
+
+        function manage_page() {
+            var connection_status;
+            var color;
+
+            var yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            var date_start = yesterday.getDate() * 10000 + (yesterday.getMonth() + 1) * 100 + yesterday.getFullYear() % 100;
+
+            var today = new Date();
+            var date_stop = today.getDate() * 10000 + (today.getMonth() + 1) * 100 + today.getFullYear() % 100;
+
+            if (timeStart <= timeStop) {
+                date_start = date_stop;
+            }
+
+            if (0 == ws_connected) {
+                connection_status = "Đang Kết Nối";
+                color = "red";
+            } else {
+                connection_status = "Đang Kết Nối " + ws_connected;
+                color = "#92D14F";
+
+                if (!json_manage_page) {
+                    var myJSON = {
+                        "page": 1,
+                        "cmd": 0,
+                        "start": [0, 0],
+                        "stop": [0, 235959],
+                        "time_stamp": 12345
+                    };
+                    myJSON.page = WS_PAGE_MANAGE;
+                    myJSON.cmd = PAGE_CMD_SEND_DATA;
+
+                    myJSON.start[0] = date_start;
+                    myJSON.start[1] = timeStart;
+                    myJSON.stop[0] = date_stop;
+                    myJSON.stop[1] = timeStop;
+                    var StrJSON = JSON.stringify(myJSON);
+                    ws.send(StrJSON);
+                    console.log('Send: ', StrJSON);
+                }
+            }
+
+            var BodyHtml = body_card_management;
+            page_current = WS_PAGE_MANAGE;
+            async_data_page = ASYNC_CARD_ENABLE;
+            BodyHtml = BodyHtml.replace("{ten}", device_name);
+            BodyHtml = BodyHtml.replace("{dia chi}", device_addr);
+            BodyHtml = BodyHtml.replace("{ket noi}", connection_status);
+            BodyHtml = BodyHtml.replace("{color}", color);
+            document.getElementById('Body').innerHTML = BodyHtml;
+
+            var TableManagement = document.getElementById('TableManagement');
+            var start_limit = 100000;
+            strTimeStart = "";
+            strTimeStop = "";
+            for (var i = 0; i < 5; i++) {
+                if (timeStart < start_limit) {
+                    strTimeStart += '0';
+                }
+                if (timeStop < start_limit) {
+                    strTimeStop += '0';
+                }
+                start_limit /= 10;
+            }
+
+            strTimeStart += timeStart;
+            strTimeStop += timeStop;
+            strStartDate = (date_start < 100000) ? ('0' + date_start) : date_start;
+            strStopDate = (date_stop < 100000) ? ('0' + date_stop) : date_stop;
+            TableManagement.rows[2].cells[1].children[0].value = strStartDate;
+            TableManagement.rows[2].cells[2].children[0].value = strTimeStart;
+            TableManagement.rows[2].cells[3].children[0].value = strStopDate;
+            TableManagement.rows[2].cells[4].children[0].value = strTimeStop;
+
+            var row_title_prepay = no_border_tr;
+            row_title_prepay = row_title_prepay.replace(/{text}/g, "Thẻ Trả Trước");
+            row_title_prepay = row_title_prepay.replace(/{border}/g, "lB rB tB");
+            row_title_prepay = row_title_prepay.replace(/{color}/g, "#ff5722");
+            var pre_tr = card_tr;
+            var pre_th = head_tr;
+            pre_tr = pre_tr.replace(/{color}/g, "black");
+            pre_th = pre_th.replace(/{color}/g, "white");
+            var tbl_pay = row_title_prepay + pre_th + pre_tr + total_tr;
+
+            var row_title_postpaid = no_border_tr;
+            row_title_postpaid = row_title_postpaid.replace(/{text}/g, "Thẻ Trả Sau");
+            row_title_postpaid = row_title_postpaid.replace(/{border}/g, "lB rB");
+            row_title_postpaid = row_title_postpaid.replace(/{color}/g, "#ff5722");
+            var post_tr = card_tr;
+            var post_th = head_tr;
+            post_tr = post_tr.replace(/{color}/g, "gray");
+            post_th = post_th.replace(/{color}/g, "gray");
+            tbl_pay += row_title_postpaid + post_th + post_tr + total_tr;
+
+            document.getElementById('TablePayment').innerHTML = tbl_pay;
+            if (json_manage_page) {
+                manage_page_process(json_manage_page);
+            }
+        }
+
+        function card_info_page() {
+            var connection_status;
+            var color;
+            if (0 == ws_connected) {
+                connection_status = "Đứt Kết Nối";
+                color = "red";
+            } else {
+                connection_status = "Đang Kết Nối " + ws_connected;
+                color = "#92D14F";
+            }
+
+            var BodyHtml = body_card_info;
+            page_current = WS_PAGE_CARD_INFO;
+            async_data_page = ASYNC_CARD_ENABLE;
+            BodyHtml = BodyHtml.replace("{ten}", device_name);
+            BodyHtml = BodyHtml.replace("{dia chi}", device_addr);
+            BodyHtml = BodyHtml.replace("{ket noi}", connection_status);
+            BodyHtml = BodyHtml.replace("{color}", color);
+            document.getElementById('Body').innerHTML = BodyHtml;
+            if (json_info_page) {
+                card_info_page_process(json_info_page);
+            }
+        }
+
+        function card_info_page_edit(element) {
+            var table = document.getElementById('TablePayment');
+            var row = element.parentNode.rowIndex;
+            var uid = table.rows[row].cells[1].innerHTML;
+
+            var connection_status;
+            var color;
+            if (0 == ws_connected) {
+                connection_status = "Đứt Kết Nối";
+                color = "red";
+            } else {
+                connection_status = "Đang Kết Nối " + ws_connected;
+                color = "#92D14F";
+            }
+
+            var BodyHtml = body_card_info;
+            page_current = WS_PAGE_CARD_INFO;
+            async_data_page = ASYNC_CARD_DISABLE;
+            BodyHtml = BodyHtml.replace("{ten}", device_name);
+            BodyHtml = BodyHtml.replace("{dia chi}", device_addr);
+            BodyHtml = BodyHtml.replace("{ket noi}", connection_status);
+            BodyHtml = BodyHtml.replace("{color}", color);
+            document.getElementById('Body').innerHTML = BodyHtml;
+
+            document.getElementById("db_cmd").value = TAG_FILE_READ;
+            document.getElementById("uid").value = uid;
+            card_info_submit();
+        }
+
+        function SettingMode(Mode) {
+            if (Mode == 1) window.open("/auth.htm");
+            if (Mode == 2) Reload();
+            if (Mode == 3) {
+                if (json_manage_page) {
+                    async_data_page = ASYNC_CARD_ENABLE;
+                    json_manage_page = JSON.parse(ws_data_manage_page);
+                    manage_page_process(json_manage_page);
+                }
+            }
+            if (Mode == 4) {
+                if (json_manage_page) {
+                    async_data_page = ASYNC_CARD_DISABLE;
+                    json_manage_page = JSON.parse(ws_data_manage_page);
+                    manage_page_search_process(json_manage_page);
+                }
+            }
+            if (Mode == 5) {
+                if (json_manage_page) {
+                    async_data_page = ASYNC_CARD_DISABLE;
+                    json_manage_page = JSON.parse(ws_data_manage_page);
+                    manage_page_search_company_process(json_manage_page);
+                }
+            }
+        }
+
+        function Reload() {
+            if (confirm("Khởi động lại kết nối") == false) return;
+            client.get('/get?param_wifi=restart', function(response) {
+                console.log("Reload");
+                setTimeout("location.reload(true);", 3000);
+            });
+        }
+
+        function onBodyLoad() {
+            client.get('/body_card_history.htm', function(response) {
+                console.log("body_card_history ok");
+                body_card_history = response;
+            });
+
+            client.get('/body_card_info.htm', function(response) {
+                console.log("body_card_info ok");
+                body_card_info = response;
+            });
+
+            client.get('/body_card_management.htm', function(response) {
+                console.log("body_card_management ok");
+                body_card_management = response;
+
+                client.get('/get?param_wifi=device_info', function(response1) {
+                    console.log(response1);
+                    var obj = JSON.parse(response1);
+                    var WsPort = Number(obj.WSPort);
+                    device_name = obj.name;
+                    device_addr = obj.addr;
+
+                    client.get('/time_stamp_find.txt', function(response2) {
+                        console.log(response2);
+                        var obj1 = JSON.parse(response2);
+                        timeStart = obj1.time1[0];
+                        timeStop = obj1.time1[1];
+                        manage_page();
+
+                        display_time();
+                        startSocket(WsPort);
+                    });
+                });
+            });
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()" id="Body">
+</body>
+
+</html>

@@ -1,0 +1,126 @@
+<div style="text-align:left;display:inline-block;min-width:260px;">
+    <br><br>
+    <h3>{ten}</h3>
+    <table border="0" width="100%" style="margin-bottom: 0px;" id="TableInfo">
+        <tbody>
+            <tr>
+                <td style="text-align: left;padding-left: 4;">Địa chỉ: {dia chi}</td>
+                <td> </td>
+                <td style="text-align: right; padding-right: 5;"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td style="text-align: right; color: {color}; padding:10; padding-top: 0;padding-right: 5;">{ket noi}</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;padding-left: 4; color: #14AFB4;"><b>Quản Lý Thẻ</b></td>
+                <td style="text-align: center; color: #00B0F0; padding-right: 5;" onclick="manage_page()">
+                    <b>Menu Chức Năng</b>
+                </td>
+                <td style="text-align: right; color: #00B0F0; padding-right: 5;" onclick="history_page()">
+                    <b>Trang Chủ</b>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="width:100%;overflow-x:scroll;">
+        <table width="100%">
+            <tbody>
+                <tr>
+                    <td align="left"><b>Chức Năng</b></td>
+                    <td align="left">
+                        <select id="db_cmd" name="db_cmd">
+                            <option value=1 selected>Thêm thẻ</option>
+                            <option value=2 >Xoá thẻ</option>
+                            <option value=0 >Chỉnh sửa thẻ</option>
+                            <option value=3 >Kiểm tra thẻ</option>
+                            <option value=4 >RESET THẺ</option>
+                            <option value=5 >==== RESET TẤT CẢ THẺ ====</option>
+                            <option value=100 >None</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Mã Thẻ</b></td>
+                    <td align="left"><input type="text" id="uid" name="uid" size="13" maxlength="8" placeholder='Mã thẻ'>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Loại Thẻ</b></td>
+                    <td align="left">
+                        <select id="rule" name="rule">
+                            <option value=0 selected>Trả trước</option>
+                            <option value=1>Trả sau</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Biển Số Xe</b></td>
+                    <td align="left"><input type="text" id="l_plates" name="l_plates" size="15" maxlength="10" placeholder='Nhập biển số xe'>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Tên Công Ty</b></td>
+                    <td align="left"><input type="text" id="company" name="company" size="15" maxlength="15" placeholder='Nhập tên công ty'>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Ghi Chú</b></td>
+                    <td align="left"><input type="text" id="note" name="note" size="15" maxlength="15" placeholder='Nhập ghi chú'>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" id="total_text"><b>Tổng Tiến Nạp Thẻ</b></td>
+                    <td align="left"><input type="number" id="topup_total" name="topup_total" size="13" maxlength="10" placeholder='Tổng đã nạp' readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Tiền Dư Còn Lại</b></td>
+                    <td align="left"><input type="number" id="balance" name="balance" size="13" maxlength="10" placeholder='Tiền trong thẻ' readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Nạp Thêm Tiền</b></td>
+                    <td align="left"><input type="number" id="top_up" name="top_up" size="13" maxlength="10" placeholder='Tiền nạp thêm'>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Nạp Thêm Tiền Nhanh</b></td>
+                    <td align="left">
+                        <select id="f_top_up" name="f_db_cmd">
+                            <option value=0 selected>0</option>
+                            <option value=100000>100.000</option>
+                            <option value=200000>200.000</option>
+                            <option value=500000>500.000</option>
+                            <option value=1000000>1.000.000</option>
+                            <option value=2000000>2.000.000</option>
+                            <option value=3000000>3.000.000</option>
+                            <option value=4000000>4.000.000</option>
+                            <option value=5000000>5.000.000</option>
+                            <option value=10000000>10.000.000</option>
+                            <option value=20000000>20.000.000</option>
+                            <option value=30000000>30.000.000</option>
+                            <option value=40000000>40.000.000</option>
+                            <option value=50000000>50.000.000</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left"><b>Cho Phép</b></td>
+                    <td align="left"><label class="switch"><input type="checkbox" id="card_enable" name="card_enable" value=1 checked>
+                            <div class="slider round"></div>
+                        </label></td>
+                </tr>
+                <tr>
+                    <td><input type="button" onclick="card_info_submit()" value="Xác nhận"></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style="text-align: center;">
+        <font size="0" face="arial" color="gray">
+            Copyright © 2020 - Bản quyền thuộc về Công ty TNHH Kỹ Thuật Mon</font>
+    </p>
+</div>

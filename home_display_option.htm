@@ -1,0 +1,77 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Home Display Option</title>
+    <link rel="stylesheet" href="/mystyle.css">
+    <script src="/myscripts.js"></script>
+    <script>
+        function display_cfg() {
+            var obj = {
+                "pump": 1,
+                "probe": 1,
+                "reader": 1,
+                "access_code": 1111
+            };
+
+            var pass = prompt("Please Enter Password");
+            if (pass.length < 4) {
+                alert('Password Input Fail');
+                return;
+            }
+
+            obj.pump = Number(document.getElementById("pump").checked);
+            obj.probe = Number(document.getElementById("probe").checked);
+            obj.reader = Number(document.getElementById("reader").checked);
+            obj.access_code = pass;
+            var StrJSON = JSON.stringify(obj);
+            client.post('/post', "home_display_option=" + StrJSON, function(response) {
+                alert(response);
+            });
+        }
+
+        function onBodyLoad() {
+            client.get('/get?param_wifi=home_display_option', function(response) {
+                console.log(response);
+                var obj = JSON.parse(response);
+                document.getElementById("pump").checked = obj.pump;
+                document.getElementById("probe").checked = obj.probe;
+                document.getElementById("reader").checked = obj.reader;
+            });
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()">
+    <div style="text-align:left;display:inline-block;min-width:260px;">
+        <br><br><br>
+        <h3>HOME DISPLAY OPTION</h3>
+        <table id="ddns_table" width="100%">
+            <tr>
+                <td align="left"><b>PUMP</b></td>
+                <td align="left"><label class="switch"><input type="checkbox" id="pump">
+                        <div class="slider round"></div>
+                    </label></td>
+            </tr>
+            <tr>
+                <td align="left"><b>PROBE</b></td>
+                <td align="left"><label class="switch"><input type="checkbox" id="probe">
+                        <div class="slider round"></div>
+                    </label></td>
+            </tr>
+            <tr>
+                <td align="left"><b>READER</b></td>
+                <td align="left"><label class="switch"><input type="checkbox" id="reader">
+                        <div class="slider round"></div>
+                    </label></td>
+            </tr>
+            <tr>
+                <td><input type="button" onclick="display_cfg()" value="Save"></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

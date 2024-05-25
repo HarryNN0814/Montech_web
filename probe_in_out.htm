@@ -1,0 +1,273 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/mystyle.css">
+    <title>Số Liệu Bồn Theo Khung Thời Gian</title>
+    <script src="/myscripts.js"></script>
+    <script>
+        var SALE_START_QUERY = 0;
+        var SALE_START_TYPE = 1;
+        var SALE_STOP_TYPE = 2;
+
+        var probe_body_find_log = "";
+        var json_in_log;
+        var device_name = "";
+        var device_addr = "";
+        var start_log_isOK = 0;
+
+        var delete_log_confirm_cnt = 0;
+        var timeout_delete_log = setTimeout(function() {
+            delete_log_confirm_cnt = 0;
+        }, 3000);
+
+        var sale_shift_header = "<tr>\
+                    <th rowspan=\"2\" class=\"thcGray\">Bồn</th>\
+                    <th rowspan=\"2\" class=\"thcGray\">Nhiên Liệu</th>\
+                    <th colspan=\"2\" class=\"thcGray\">Mức Nhiên Liệu Đầu</th>\
+                    <th colspan=\"2\" class=\"thcGray\">Mức Nhiên Liệu Cuối</th>\
+                    <th rowspan=\"2\" class=\"thcGray\">Số Lượng Xuất (Lít)</th>\
+                    <th rowspan=\"2\" class=\"thcGray\">Số Lượng Nhập (Lít)</th>\
+                    <th rowspan=\"2\" class=\"thcGray\">Tải Về</th>\
+                    </tr>\
+                    <tr>\
+                        <th class=\"thcGray\">mm</th>\
+                        <th class=\"thcGray\">Lít</th>\
+                        <th class=\"thcGray\">mm</th>\
+                        <th class=\"thcGray\">Lít</th>\
+                    </tr>";
+
+        var sale_shift_tr = "<tr>\
+					<td>-</td>\
+					<td onclick='probe_log_ie_delete(this);'>-</td>\
+					<td>-</td>\
+                    <td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+                    <td style=\"color: #11C7DA;\" onclick='probe_log_download(this);'><b>></b></td>\
+					</tr>";
+
+        function home_page() {
+            window.location = "/home.htm";
+        }
+
+        function probe_find_log_page() {
+            window.location = "/probe_find_log.htm";
+        }
+
+        function probe_start_read() {
+            var answer = "";
+            if (1 == start_log_isOK) {
+                answer = confirm("Xác Nhận Bắt Đầu Lại");
+            } else {
+                answer = confirm("Xác Nhận Bắt Đầu");
+            }
+            if (!answer) return;
+            probe_in_out_request(SALE_START_TYPE);
+        }
+
+        function probe_stop_read() {
+            if (0 == start_log_isOK) {
+                return;
+            }
+            var answer = confirm("Xác Nhận Kết Thúc");
+            if (!answer) return;
+            probe_in_out_request(SALE_STOP_TYPE);
+        }
+
+        function probe_log_ie_delete(element) {
+            clearTimeout(timeout_delete_log);
+            timeout_delete_log = setTimeout(function() {
+                delete_log_confirm_cnt = 0;
+            }, 3000);
+            if (++delete_log_confirm_cnt == 3) {
+                delete_log_confirm_cnt = 0;
+                var table = document.getElementById("probe_sale_in_out");
+                var row = element.parentNode.rowIndex;
+                var probe_num = table.rows[row].cells[0].innerHTML;
+                var answer = confirm("Xác nhận xoá LOG xuất nhập que đo " + probe_num);
+                if (!answer) return;
+
+                var probe_log = "probe_ie_";
+                probe_log += add_1zero_number(probe_num);
+
+                probe_log += ".csv";
+                console.log(probe_log);
+                client.delect('/edit_sdfs', "path=/" + probe_log, function(response) {
+                    console.log(response);
+                    alert("Xóa LOG xuất nhập que đo " + probe_num + " OK");
+                });
+            }
+        }
+
+        function probe_log_download(element) {
+            var table = document.getElementById("probe_sale_in_out");
+            var row = element.parentNode.rowIndex;
+            var probe_num = table.rows[row].cells[0].innerHTML;
+            var answer = confirm("Xác nhận tải LOG que đo " + probe_num);
+            if (!answer) return;
+
+            var probe_log = "probe_ie_";
+            probe_log += add_1zero_number(probe_num);
+
+            probe_log += ".csv";
+            console.log(probe_log);
+            window.open("/edit_sdfs?download=/" + probe_log);
+        }
+
+        function probe_int_out_page_fill_time(type, date, time) {
+            var table = document.getElementById('probe_time_in_out');
+            var time_str = date_num2str(date) + " " + time_num2str(time);
+            if (SALE_START_TYPE == type) {
+                table.rows[0].cells[1].innerHTML = time_str;
+                table.rows[1].cells[1].innerHTML = "--/--/---- --:--:--";
+            }
+
+            if (SALE_STOP_TYPE == type) {
+                table.rows[1].cells[1].innerHTML = time_str;
+            }
+        }
+
+        function probe_in_out_page_display(type, obj) {
+            /* Display probe sale shift 
+                [probe_sale_time] C1: Bồn, C2: Nhiên liệu, C3: mm nhiên liệu, C4: Lít nhiên liệu
+            */
+            console.log("[TYPE display] " + type);
+
+            if (obj.status == "ok") {
+                probe_int_out_page_fill_time(type, obj.date, obj.time);
+            }
+
+            var probe_num = obj.probe_sale_time.length;
+            var table = document.getElementById('probe_sale_in_out');
+            for (var i = 0; i < probe_num; ++i) {
+                var j = i + 2;
+                if (SALE_START_TYPE == type) {
+                    table.rows[j].cells[0].innerHTML = obj.probe_sale_time[i].C1;
+
+                    if (obj.status == "ok") {
+                        table.rows[j].cells[2].innerHTML = obj.probe_sale_time[i].C3;
+                        table.rows[j].cells[3].innerHTML = probe_format(Number(obj.probe_sale_time[i].C4) / 1, "");
+                    }
+                    var fuel = obj.probe_sale_time[i].C2;
+                    if (fuel == 0) {
+                        table.rows[j].cells[1].innerHTML = "A92_II";
+                        table.rows[j].cells[1].className = "cGreen";
+                    } else if (fuel == 1) {
+                        table.rows[j].cells[1].innerHTML = "A95_III";
+                        table.rows[j].cells[1].className = "cBlue";
+                    } else if (fuel == 2) {
+                        table.rows[j].cells[1].innerHTML = "A95_IV";
+                        table.rows[j].cells[1].className = "cBlue";
+                    } else if (fuel == 3) {
+                        table.rows[j].cells[1].innerHTML = "E5";
+                        table.rows[j].cells[1].className = "cXanhLo";
+                    } else if (fuel == 4) {
+                        table.rows[j].cells[1].innerHTML = "DO";
+                        table.rows[j].cells[1].className = "cOrange";
+                    } else if (fuel == 5) {
+                        table.rows[j].cells[1].innerHTML = "DO_II";
+                        table.rows[j].cells[1].className = "cOrange";
+                    } else if (fuel == 6) {
+                        table.rows[j].cells[1].innerHTML = "KO";
+                        table.rows[j].cells[1].className = "cTim";
+                    } else if (fuel == 7) {
+                        table.rows[j].cells[1].innerHTML = "DO_V";
+                        table.rows[j].cells[1].className = "cOrange";
+                    } else {
+                        table.rows[j].cells[1].innerHTML = "Fail";
+                        table.rows[j].cells[1].className = "cBlack";
+                    }
+                }
+
+                if (SALE_STOP_TYPE == type) {
+                    table.rows[j].cells[4].innerHTML = obj.probe_sale_time[i].C3;
+                    table.rows[j].cells[5].innerHTML = probe_format(Number(obj.probe_sale_time[i].C4) / 1, "");
+
+                    var tt_fuel = (json_in_log.probe_sale_time[i].C4 - obj.probe_sale_time[i].C4);
+                    if (tt_fuel >= 0) {
+                        table.rows[j].cells[6].innerHTML = probe_format(tt_fuel / 1, "");
+                        table.rows[j].cells[7].innerHTML = "-";
+                    } else {
+                        table.rows[j].cells[7].innerHTML = probe_format((0 - tt_fuel) / 1, "");
+                        table.rows[j].cells[6].innerHTML = "-";
+                    }
+                }
+            }
+        }
+
+        function probe_in_out_page_make_table(obj) {
+            var table_sale_shift = "";
+            var length = obj.probe_sale_time.length;
+            console.log("probe_sale_time Array num " + length);
+            table_sale_shift += sale_shift_header;
+
+            for (var i = 0; i < length; ++i) {
+                table_sale_shift += sale_shift_tr;
+            }
+
+            var table = document.getElementById('probe_sale_in_out');
+            table.innerHTML = table_sale_shift;
+        }
+
+        function probe_in_out_request(type) {
+            var type_time = '&type=' + type;
+            client.get('/get?param_wifi=probe_in_out_time' + type_time, function(response) {
+                console.log(response);
+                var json_log = JSON.parse(response);
+                if (json_log.status == "error") {
+                    return;
+                }
+
+                if (SALE_START_TYPE == type || SALE_START_QUERY == type) {
+                    type = SALE_START_TYPE;
+                    json_in_log = json_log;
+                    probe_in_out_page_make_table(json_log);
+                    if (json_log.status == "ok") {
+                        start_log_isOK = 1;
+                        document.getElementById('bt_batdau').value = "BẮT ĐẦU LẠI";
+                    }
+                } else {
+                    start_log_isOK = 0;
+                    document.getElementById('bt_batdau').value = "BẮT ĐẦU";
+                }
+                probe_in_out_page_display(type, json_log);
+            });
+        }
+
+        function onBodyLoad() {
+            client.get('/probe_body_in_out.htm', function(response) {
+                console.log("probe_body_in_out ok");
+                probe_body_find_log = response;
+                client.get('/get?param_wifi=device_info', function(response) {
+                    console.log(response);
+                    var obj = JSON.parse(response);
+                    device_name = obj.name;
+                    device_addr = obj.addr;
+
+                    var BodyHtml = probe_body_find_log;
+                    BodyHtml = BodyHtml.replace("{ten}", device_name);
+                    BodyHtml = BodyHtml.replace("{dia chi}", device_addr);
+                    BodyHtml = BodyHtml.replace("{ket noi}", "Chờ kết nối");
+                    BodyHtml = BodyHtml.replace("{color}", "blue");
+                    document.getElementById('Body').innerHTML = BodyHtml;
+                    /* Must be call after generate body html*/
+                    display_time();
+                    probe_connection_status();
+                    probe_in_out_request(SALE_START_QUERY);
+                });
+            });
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()" id="Body">
+</body>
+
+<script>
+</script>
+
+</html>

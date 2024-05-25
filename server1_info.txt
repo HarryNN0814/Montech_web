@@ -1,0 +1,44 @@
+{
+  "domain": "192.168.1.101",
+  "url": [
+    "petro_counter",
+    "petro_counter",
+    "card_data",
+    "probe_data"
+  ],
+  "user": "admin",
+  "pass": "admin",
+  "key": "1234567890123456",
+  "port": 25130,
+  "stationStatusInterval": 300,
+  "stationCode": 1000,
+  "httpApiRetryTimes": 0,
+  "httpRetryInterval": 30,
+  "pumpDataInterval": 1000,
+  "version": 1,
+  "enable": false,
+  "param_int": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "param_str": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10"
+  ]
+}

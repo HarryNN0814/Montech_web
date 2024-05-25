@@ -1,0 +1,69 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Cài Đặt Đầu Đọc Thẻ</title>
+    <link rel="stylesheet" href="/mystyle.css">
+    <script src="/myscripts.js"></script>
+    <script>
+        var readerDevice = 0;
+
+        function UpdateAdr(element) {
+            var table = document.getElementById('TableDevice');
+            var row = element.parentNode.parentNode.parentNode.rowIndex;
+            console.log("row: " + row.toString());
+            var myJSON = {
+                "reader_index": 0,
+                "serial": 1,
+                "timeout": 300,
+                "enable": 0
+            };
+
+            myJSON.reader_index = row;
+            myJSON.serial = row + 1;
+            if (element.checked == true) {
+                myJSON.enable = 1;
+            }
+            var StrJSON = JSON.stringify(myJSON);
+            client.post('/post', "reader_addr=" + StrJSON, function(response) {
+                // do something with response
+                console.log(response);
+            });
+        }
+
+        var myTableDevice = "<tr>\
+            <td>Vòi {voi}</td>\
+            <td><label class=\"switch\"><input type=\"checkbox\" onclick=\"UpdateAdr(this)\" {check}><div class=\"slider round\"></div></label></td>\
+            </tr>";
+
+        function onBodyLoad() {
+            client.get('/get?param_wifi=reader_addr', function(response) {
+                console.log(response);
+                var obj = JSON.parse(response);
+                readerDevice = Number(obj.reader_addr);
+                var Table = "";
+                var Rows = "";
+                var Index = 0;
+                while (Index < 20) {
+                    Rows = myTableDevice;
+                    Rows = Rows.replace("{voi}", Index + 1);
+                    if (readerDevice & (1 << Index)) Rows = Rows.replace("{check}", "checked");
+                    else Rows = Rows.replace("{check}", "");
+                    Table += Rows;
+                    Index++;
+                }
+                document.getElementById('TableDevice').innerHTML = Table;
+            });
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()">
+    <div style="text-align:left;display:inline-block;min-width:260px;">
+        <h3 align="center">Cài Đặt Đầu Đọc Thẻ</h3>
+        <table width="100%" id="TableDevice"></table>
+    </div>
+</body>
+
+</html>

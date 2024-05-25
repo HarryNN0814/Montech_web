@@ -1,0 +1,140 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Http API setting</title>
+    <link rel="stylesheet" href="/mystyle.css">
+    <script src="/myscripts.js"></script>
+    <script>
+        function server_info_setting() {
+            var obj = {
+                "domain": "192.168.1.100",
+                "pumpUrl": "petro_counter.php",
+                "statusUrl": "petro_counter.php",
+                "user": "admin",
+                "pass": "admin",
+                "key": "1234567890123456",
+                "port": 80,
+                "statusInterval": 60,
+                "stationCode": 1000
+            };
+
+            var pass = prompt("Please Enter Password");
+            if (pass.length < 4) {
+                alert('Password Input Fail');
+                return;
+            }
+
+            var table = document.getElementById('http_api_setting');
+            obj.domain = table.rows[1].cells[1].children[0].value;
+            obj.pumpUrl = table.rows[2].cells[1].children[0].value;
+            obj.statusUrl = table.rows[3].cells[1].children[0].value;
+            obj.user = table.rows[4].cells[1].children[0].value;
+            obj.pass = table.rows[5].cells[1].children[0].value;
+            obj.key = table.rows[6].cells[1].children[0].value;
+            obj.port = Number(table.rows[7].cells[1].children[0].value);
+            obj.statusInterval = Number(table.rows[8].cells[1].children[0].value);
+            obj.stationCode = Number(table.rows[9].cells[1].children[0].value);
+            obj.enable = Number(document.getElementById("enable").checked);
+            obj.server = Number(document.getElementById("p_server").value) - 1;
+            obj.access_code = pass;
+            var StrJSON = JSON.stringify(obj);
+            console.log('Post: ' + StrJSON);
+            client.post('/post', "http_api_info=" + StrJSON, function(response) {
+                alert(response);
+            });
+        }
+
+        function server_info_read_onChange(server) {
+            var server_request = server - 1;
+            client.get('/get?param_wifi=http_api_info&server=' + server_request, function(response) {
+                console.log('Server' + server + ': ' + response);
+                var obj = JSON.parse(response);
+                var table = document.getElementById('http_api_setting');
+                table.rows[1].cells[1].children[0].value = obj.domain;
+                table.rows[2].cells[1].children[0].value = obj.pumpUrl;
+                table.rows[3].cells[1].children[0].value = obj.statusUrl;
+                table.rows[4].cells[1].children[0].value = obj.user;
+                table.rows[5].cells[1].children[0].value = obj.pass;
+                table.rows[6].cells[1].children[0].value = obj.key;
+                table.rows[7].cells[1].children[0].value = obj.port;
+                table.rows[8].cells[1].children[0].value = obj.statusInterval;
+                table.rows[9].cells[1].children[0].value = obj.stationCode;
+                document.getElementById("enable").checked = obj.enable;
+
+                alert('Load Server' + server + ' OK');
+            });
+        }
+
+        function onBodyLoad() {
+            server_info_read_onChange(1);
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()">
+    <div style="text-align:left;display:inline-block;min-width:260px;">
+        <br><br><br>
+        <h3>HTTP API INFORMATION</h3>
+        <table id="http_api_setting" width="100%">
+            <tr>
+                <td align="left"><b>Server</b></td>
+                <td align="left">
+                    <select id="p_server" name="p_server" onchange="server_info_read_onChange(value);">
+                        <option value=1 selected>Server 1</option>
+                        <option value=2 >Server 2</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td align="left">Domain</td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td align="left">Pump Url</td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td align="left">Status Url</td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td align="left">User</td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td align="left">Pass</td>
+                <td><input type="text"></td>
+            </tr>
+            <tr>
+                <td align="left">Key</td>
+                <td><input type="tex" maxlength="16" size="16"></td>
+            </tr>
+            <tr>
+                <td align="left">Port</td>
+                <td><input type="number" maxlength="5"></td>
+            </tr>
+            <tr>
+                <td align="left">Status Interval</td>
+                <td><input type="number" maxlength="3"></td>
+            </tr>
+            <tr>
+                <td align="left">Station Code</td>
+                <td><input type="number" maxlength="4"></td>
+            </tr>
+            <tr>
+                <td align="left"><b>Enable</b></td>
+                <td align="left"><label class="switch"><input type="checkbox" id="enable">
+                        <div class="slider round"></div>
+                    </label></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="button" onclick="server_info_setting()" value="Save"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

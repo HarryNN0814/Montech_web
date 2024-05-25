@@ -1,0 +1,65 @@
+<div style="text-align:left;display:inline-block;min-width:260px;">
+    <br><br>
+    <h3>{ten}</h3>
+    <table border="0" width="100%" style="margin-bottom: 0px;" id="TableInfo">
+        <tbody>
+            <tr>
+                <td style="text-align: left;padding-left: 0;">Địa chỉ: {dia chi}</td>
+                <td> </td>
+                <td style="text-align: right; padding-right: 0;"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td style="text-align: right; color: {color}; padding:10; padding-top: 0;padding-right: 0;">{ket noi}</td>
+            </tr>
+        </tbody>
+    </table>
+    <table border="0" width="100%" style="margin-bottom: 0px;" id="TableManagement">
+        <tbody>
+            <tr>
+                <td style="text-align: left;padding-left: 0; color: #00B0F0;" onclick="history_page()"><b>Trang Chủ</b></td>
+                <td style="text-align: center;padding-left: 0; color: #00B0F0;" onclick="download_history_log()"><b>Tải LOG</b></td>
+                <td style="text-align: center;padding-left: 0; color: #00B0F0;" onclick="card_info_page()"><b>Quản Lý Thẻ</b></td>
+                <td style="text-align: center;padding-left: 0; color: #00B0F0;" onclick="SettingMode(1)"><b>Đổi Mật Khẩu</b></td>
+                <td style="text-align: right;padding-left: 0; color: #00B0F0;" onclick="SettingMode(2)"><b>Khởi Động Lại</b></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="text-align: center;padding-right: 0;">Ngày bắt đầu (ddmmyy)</td>
+                <td style="text-align: center;padding-right: 0;">Giờ bắt đầu (hhmmss)</td>
+                <td style="text-align: center;padding-right: 0;">Ngày kết thúc (ddmmyy)</td>
+                <td style="text-align: center;padding-right: 0;" onclick="loadPageTimeStampFind()">Giờ kết thúc (hhmmss)</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;padding-left: 0;"><input type="button" value="Tìm Kiếm" onclick="SearchLog()"></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="6" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="6" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="6" size="6" class="text-center" /></td>
+                <td style="text-align: right;padding-right: 0;"><input type="number" maxlength="6" size="6" class="text-center" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="text-align: center;padding-right: 0;">Biển Số Xe</td>
+                <td style="text-align: center;padding-right: 0;">Tên Công Ty</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-right: 0;"><input style="text-align: center;" type="text" size="15" maxlength="15" id="lp_find" name="lp_find" placeholder='Nhập Biển Số Xe'></td>
+                <td style="padding-right: 0;"><input style="text-align: center;" type="text" size="15" maxlength="15" id="lp_company" name="lp_company" placeholder='Nhập Tên Công Ty'></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="width:100%;overflow-x:scroll;">
+        <table border="1" id="TablePayment" width="100%">
+        </table>
+    </div>
+    <p style="text-align: center;">
+        <font size="0" face="arial" color="gray">
+            Copyright © 2020 - Bản quyền thuộc về Công ty TNHH Kỹ Thuật Mon</font>
+    </p>
+</div>

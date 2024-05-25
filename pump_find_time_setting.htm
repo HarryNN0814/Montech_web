@@ -1,0 +1,170 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/mystyle.css">
+    <script src="/myscripts.js"></script>
+    <title>Cài Đặt Khung Thời Gian Ca Bán</title>
+    <script>
+        function UpdateTime() {
+            var myJSON = {
+                "t_start": 0,
+                "t_stop": 235959
+            };
+            var table = document.getElementById('TableTime');
+            myJSON.t_start = Number(table.rows[1].cells[1].children[0].value) % 235960;
+            myJSON.t_stop = Number(table.rows[2].cells[1].children[0].value) % 235960;
+            myJSON.t_start1 = Number(table.rows[4].cells[1].children[0].value) % 235960;
+            myJSON.t_stop1 = Number(table.rows[5].cells[1].children[0].value) % 235960;
+            myJSON.t_start2 = Number(table.rows[7].cells[1].children[0].value) % 235960;
+            myJSON.t_stop2 = Number(table.rows[8].cells[1].children[0].value) % 235960;
+            var StrJSON = JSON.stringify(myJSON);
+            client.post('/post', "search_time=" + StrJSON, function(response) {
+                alert(response);
+                table.rows[1].cells[1].children[0].value = myJSON.t_start;
+                table.rows[2].cells[1].children[0].value = myJSON.t_stop;
+                table.rows[4].cells[1].children[0].value = myJSON.t_start1;
+                table.rows[5].cells[1].children[0].value = myJSON.t_stop1;
+                table.rows[7].cells[1].children[0].value = myJSON.t_start2;
+                table.rows[8].cells[1].children[0].value = myJSON.t_stop2;
+            });
+        }
+
+        function onBodyLoad() {
+            client.get('/get?param_wifi=search_time', function(response) {
+                console.log(response);
+                var obj = JSON.parse(response);
+                var t_start = obj.t_start;
+                var t_stop = obj.t_stop;
+
+                var str_start = "";
+                var start_limit = 100000;
+                for (var i = 0; i < 5; i++) {
+                    if (t_start < start_limit) {
+                        str_start += '0';
+                    }
+                    start_limit /= 10;
+                }
+
+                str_start += t_start;
+
+                var str_stop = "";
+                var stop_limit = 100000;
+                for (var i = 0; i < 5; i++) {
+                    if (t_stop < stop_limit) {
+                        str_stop += '0';
+                    }
+                    stop_limit /= 10;
+                }
+                str_stop += t_stop;
+
+                var t_start1 = obj.t_start1;
+                var t_stop1 = obj.t_stop1;
+
+                var str_start1 = "";
+                var start_limit1 = 100000;
+                for (var i = 0; i < 5; i++) {
+                    if (t_start1 < start_limit1) {
+                        str_start1 += '0';
+                    }
+                    start_limit1 /= 10;
+                }
+
+                str_start1 += t_start1;
+
+                var str_stop1 = "";
+                var stop_limit1 = 100000;
+                for (var i = 0; i < 5; i++) {
+                    if (t_stop1 < stop_limit1) {
+                        str_stop1 += '0';
+                    }
+                    stop_limit1 /= 10;
+                }
+                str_stop1 += t_stop1;
+
+                var t_start2 = obj.t_start2;
+                var t_stop2 = obj.t_stop2;
+
+                var str_start2 = "";
+                var start_limit2 = 100000;
+                for (var i = 0; i < 5; i++) {
+                    if (t_start2 < start_limit2) {
+                        str_start2 += '0';
+                    }
+                    start_limit2 /= 10;
+                }
+
+                str_start2 += t_start2;
+
+                var str_stop2 = "";
+                var stop_limit2 = 100000;
+                for (var i = 0; i < 5; i++) {
+                    if (t_stop2 < stop_limit2) {
+                        str_stop2 += '0';
+                    }
+                    stop_limit2 /= 10;
+                }
+                str_stop2 += t_stop2;
+
+                var table = document.getElementById('TableTime');
+                table.rows[1].cells[1].children[0].value = str_start;
+                table.rows[2].cells[1].children[0].value = str_stop;
+
+                table.rows[4].cells[1].children[0].value = str_start1;
+                table.rows[5].cells[1].children[0].value = str_stop1;
+
+                table.rows[7].cells[1].children[0].value = str_start2;
+                table.rows[8].cells[1].children[0].value = str_stop2;
+            });
+        }
+    </script>
+</head>
+
+<body onload="onBodyLoad()" id="Body">
+    <div style="text-align:left;display:inline-block;min-width:260px;">
+        <br><br><br><br><br>
+        <h3 align="center" style="color: #ff5722;">KHUNG THỜI GIAN CA BÁN</h3>
+        <table id="TableTime" width="100%">
+            <tr>
+                <td align="left" style="color: #14AFB4;"><b>BA BÁN 1</b></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td align="left">Thời gian bắt đầu (hhmmss)</td>
+                <td><input type="number" min="0" max="235959" size="10"></td>
+            </tr>
+            <tr>
+                <td align="left">Thời gian kết thúc (hhmmss)</td>
+                <td><input type="number" min="0" max="235959" size="10"></td>
+            </tr>
+            <tr>
+                <td align="left" style="color: #14AFB4;"><b>BA BÁN 2</b></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td align="left">Thời gian bắt đầu (hhmmss)</td>
+                <td><input type="number" min="0" max="235959" size="10"></td>
+            </tr>
+            <tr>
+                <td align="left">Thời gian kết thúc (hhmmss)</td>
+                <td><input type="number" min="0" max="235959" size="10"></td>
+            </tr>
+            <tr>
+                <td align="left" style="color: #14AFB4;"><b>BA BÁN 3</b></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td align="left">Thời gian bắt đầu (hhmmss)</td>
+                <td><input type="number" min="0" max="235959" size="10"></td>
+            </tr>
+            <tr>
+                <td align="left">Thời gian kết thúc (hhmmss)</td>
+                <td><input type="number" min="0" max="235959" size="10"></td>
+            </tr>
+        </table>
+        <br><input type="button" value="Save" onclick="UpdateTime()">
+    </div>
+</body>
+
+</html>

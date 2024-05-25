@@ -1,0 +1,1207 @@
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="/mystyle.css" />
+    <title id="title">MONTECH - QUẢN LÝ BÁN HÀNG</title>
+    <script src="/myscripts.js"></script>
+  </head>
+  <body onload="onBodyLoad()" id="Body">
+    <script>
+      var beginTableHomePageHtml =
+        '<div style="text-align:left;display:inline-block;min-width:260px;background-color:rgba(255, 255, 255, 0.8);font-size:18px;font-family:Arial;">\
+            <h3 style="text-align: center;margin: 5px;margin-left: 0;padding-left: 3;">{ten}</h3>\
+            <table border="0" width="100%" style="margin-bottom: -5px;" id="TableInfo" class="tableNoBorder">\
+                <tbody>\
+                <tr>\
+                        <td style="text-align: left;padding-left: 0;">Địa chỉ: {dia chi}</td>\
+                        <td></td>\
+                        <td style="text-align: right; padding-right: 0;">20-01-2018 16:30:30</td>\
+                    </tr>\
+                <tr>\
+                        <td></td>\
+                        <td></td>\
+                        <td style="text-align: right; color: #92D14F; padding:10; padding-top: 0;padding-right: 0;"></td>\
+                    </tr>\
+            </tbody></table>';
+      var endTableHomePageHtml =
+        '<p style="text-align: center;"><font size="2" face="arial" color="black">\
+                    <a href=\'https://tavitech.com.vn/\'>Copyright © 2022 - Bản quyền thuộc về Công ty TNHH Kỹ Thuật Mon</a></font></p>\
+                </div>';
+      var pumpTableHomePageHtml =
+        '<table border="0" width="100%" style="margin-bottom: -20px;" class="tableNoBorder">\
+			<tbody>\
+			<tr>\
+					<td style="text-align: left;padding-left: 0; color: #ff5722;"><u><b>TRỤ BƠM</u></b></td>\
+					<td></td>\
+				</tr>\
+		</tbody></table>\
+		<div style="width:100%;overflow-x:scroll;">\
+		<table border="1" id="TablePump" width="100%">\
+		</table>\
+		</div>';
+
+      var probeTableHomePageHtml =
+        '<table border="0" width="100%" style="margin-bottom: 0px;" class="tableNoBorder">\
+			<tbody>\
+			<tr>\
+					<td style="text-align: left;padding-left: 0; color: #ff5722;"><u><b>BỒN NHIÊN LIỆU</u></b></td>\
+					<td></td>\
+				</tr>\
+		</tbody></table>\
+		<div style="width:100%;overflow-x:scroll;">\
+		<table border="1" id="TableProbe" width="100%">\
+		</table>\
+		</div>';
+
+      var cardTableHomePageHtml =
+        '<table border="0" width="100%" style="margin-bottom: 0px;" class="tableNoBorder">\
+			<tbody>\
+			<tr>\
+					<td style="text-align: left;padding-left: 0; color: #ff5722;"><u><b>BÁN HÀNG DÙNG THẺ</u></b></td>\
+					<td></td>\
+				</tr>\
+		</tbody></table>\
+		<div style="width:100%;overflow-x:scroll;">\
+		<table border="1" id="TableCard" width="100%">\
+		</table>\
+		</div>';
+
+      var BodyDetail =
+        '<div style="text-align:left;display:inline-block;min-width:260px;">\
+                <h3 style="text-align: center;margin: 5px;margin-left: 0;padding-left: 0;">{ten}</h3>\
+                <table border="0" width="100%" style="margin-bottom: -10px;" id="TableInfo" class="tableNoBorder">\
+                    <tr>\
+                            <td style="text-align: left;padding-left: 0;">Địa chỉ: {dia chi}</td>\
+                            <td></td>\
+                            <td style="text-align: right;padding-right: 0;">20-01-2018 16:30:30</td>\
+                        </tr>\
+                </table>\
+                <br>\
+                <div style="width:100%;overflow-x:scroll;">\
+                <table border="1" id="TablePump" width="100%" style="background-color: rgba(255, 255, 255, 0.8);">\
+                </table>\
+                <p style="text-align: right; margin: 6;" onclick="Homepage()"><font size="1" face="arial" class="cXanhLo">Trang chủ</font></p>\
+                <p style="text-align: left; margin: 8; margin-left: 0;"><font size="1" face="arial" color="black">Nhật Ký 05 Lần Bơm Gần Nhất</font></p>\
+                <table border="1" id="TableFn" width="100%" style="background-color: rgba(255, 255, 255, 0.8);">\
+                </table>\
+                </div>\
+                <p style="text-align: center;"><font size="2" face="arial" color="black">\
+                    <a href=\'https://tavitech.com.vn/\'>Copyright © 2022 - Bản quyền thuộc về Công ty TNHH Kỹ Thuật Mon</a></font></p>\
+                </div>';
+      var myI2CDeviceDetailsPage = 0;
+      var pageDetailsTotalTrTh =
+        '<tr>\
+		<th>Vòi</th>\
+		<th><p onclick="HiddenFunction(0)">Kết nối</p></th>\
+		<th>Nhiên liệu</th>\
+		<th><p onclick="HiddenFunction(1)">Serial</p></th>\
+		<th>Tổng Số Tiền (đồng)</th>\
+		<th><p onclick="HiddenFunction(4)">Tổng Số Lượng (lít)</p></th>\
+		<th>Tổng Lần Bán (lần)</th>\
+		<th>Lùi</th>\
+		<th>Tới</th>\
+		</tr>';
+      var pageDetailsTotalTrTd =
+        '<tr>\
+					<td>{voi}</td>\
+					<td align="center"><p class="circle"></p></td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td class="cXanhLo"><p onclick="Details(this,2)"><</p></td>\
+					<td class="cXanhLo"><p onclick="Details(this,1)">></p></td>\
+					</tr>';
+
+      var pageDetailsHistoryTrTh =
+        '<tr>\
+		<th>Lần</th>\
+		<th>Số Hoá Đơn</th>\
+		<th>Ngày</th>\
+		<th>Giờ</th>\
+		<th>Số Tiền (đồng)</th>\
+		<th>Số Lượng (lít)</th>\
+		<th>Đơn Giá (đồng/lít)</th>\
+		<th><p onclick="SettingMode(this)">Chức năng</p></th>\
+		</tr>';
+      var pageDetailsHistoryTrTd =
+        '<tr>\
+					<td>{lan}</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td class="cXanhLo"><p onclick="SettingMode(this)">{Fn}</p></td>\
+					</tr>';
+
+      var HOME_PAGE_HANDLE = 0;
+      var DETAIL_PAGE_HANDLE = 1;
+      var pageHomeHandle = 0;
+      var myPumpDevice = 0;
+      var myProbeDevice = 0;
+      var myCardDevice = 0;
+      var homePageType = 0;
+
+      var pumpHomeDisplay = 0;
+      var probeHomeDisplay = 0;
+      var readerHomeDisplay = 0;
+
+      var pumpTrTh =
+        '<tr>\
+					<th>Vòi</th>\
+					<th>Kết Nối</th>\
+					<th>Nhiên Liệu</th>\
+					<th><p onclick="HiddenFunction(255)">Serial</p></th>\
+					<th>Trạng Thái</th>\
+					<th>Loại Giao Dịch</th>\
+					<th>Số Tiền (đồng)</th>\
+					<th>Số Lượng (lít)</th>\
+					<th onclick="HiddenFunction(3)">Đơn Giá (đồng/lít)</th>\
+					<th>Chi Tiết</th>\
+					</tr>';
+
+      var pumpTrTd =
+        '<tr>\
+					<td>{voi}</td>\
+					<td align="center"><p class="circle"></p></td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td onclick="SetCostFunction(this,2)">-</td>\
+					<td><p onclick="Details(this, 0)">></p></td>\
+					</tr>';
+
+      var probeTrTh =
+        '<tr>\
+					<th rowspan="2" class="thcGray">Bồn</th>\
+					<th rowspan="2" class="thcGray">Kết nối</th>\
+					<th rowspan="2" class="thcGray">Nhiên Liệu</th>\
+					<th rowspan="2" class="thcGray">Dung tích (Lít)</th>\
+					<th colspan="2" class="thcGray">Mức Nhiên Liệu</th>\
+					<th colspan="2" class="thcGray">Mức nước</th>\
+					<th rowspan="2" class="thcGray">Nhiệt độ (°C)</th>\
+					<th rowspan="2" class="thcGray">Chi tiết</th>\
+					</tr>\
+					<tr>\
+						<th class="thcGray">mm</th>\
+						<th class="thcGray">Lít</th>\
+						<th class="thcGray">mm</th>\
+						<th class="thcGray">Lít</th>\
+					</tr>';
+
+      var probeTrTd =
+        '<tr>\
+					<td>{bon}</td>\
+					<td align="center"><p class="circle"></p></td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td>-</td>\
+					<td><p onclick="probe_detail()">></p></td>\
+					</tr>';
+
+      var cardTrTh =
+        "<tr>\
+                    <th>STT</th>\
+                    <th>Ngày</th>\
+                    <th>Giờ</th>\
+                    <th>Biển Số Xe</th>\
+                    <th>Số Tiền Đã Bơm</th>\
+                    <th>Số Lít Đã Bơm</th>\
+                    <th>Đơn Giá</th>\
+                    <th>Tên Công Ty</th>\
+                    <th>Ghi Chú</th>\
+					<th>Chi Tiết</th>\
+                    </tr>";
+
+      var cardTrTd =
+        '<tr>\
+                    <td>{card}</td>\
+                    <td></td>\
+                    <td></td>\
+                    <td></td>\
+                    <td></td>\
+                    <td></td>\
+                    <td></td>\
+                    <td></td>\
+                    <td></td>\
+					<td class="cXanhLo"><p onclick="card_detail()">></p></td>\
+                    </tr>';
+
+      function probe_detail() {
+        window.location = "/probe_find_log.htm";
+      }
+
+      function card_detail() {
+        window.location = "/card_reader.htm";
+      }
+
+      function createPumpTable(PumpIndex) {
+        var Table = pumpTrTh;
+        var Rows = "";
+        var Index = 0;
+        while (Index < 20) {
+          if (PumpIndex & (1 << Index)) {
+            Rows = pumpTrTd;
+            Rows = Rows.replace("{voi}", Index + 1);
+            Table += Rows;
+          }
+          Index++;
+        }
+        document.getElementById("TablePump").innerHTML = Table;
+      }
+
+      function createProbeTable(ProbeIndex) {
+        var Table = probeTrTh;
+        var Rows = "";
+        var Index = 0;
+        while (Index < 10) {
+          if (ProbeIndex & (1 << Index)) {
+            Rows = probeTrTd;
+            Rows = Rows.replace("{bon}", Index + 1);
+            Table += Rows;
+          }
+          Index++;
+        }
+        document.getElementById("TableProbe").innerHTML = Table;
+      }
+
+      function createCardHistoryTable(CardIndex) {
+        var Table = cardTrTh;
+        var Rows = "";
+        var Index = 0;
+        while (Index < CardIndex) {
+          Rows = cardTrTd;
+          Rows = Rows.replace("{card}", Index + 1);
+          Table += Rows;
+          Index++;
+        }
+        document.getElementById("TableCard").innerHTML = Table;
+      }
+
+      function Reload() {
+        if (confirm("Khởi động lại kết nối") == false) return;
+        client.get("/get?param_wifi=restart", function (response) {
+          console.log("Reload");
+          setTimeout("location.reload(true);", 3000);
+        });
+      }
+
+      var NamePump = "";
+      var AddrPump = "";
+
+      var P_HOME = 1;
+      var P_INDEX = 2;
+      var Cmd_Cur = 0;
+      var Cmd_Next = 1;
+      var Cmd_Rev = 2;
+
+      function Details(element, Cmd) {
+        pageHomeHandle = DETAIL_PAGE_HANDLE;
+        var myJSON = {
+          WsCmd: "CM1",
+          Page: 1,
+          Voi: 1,
+          Tag: 1,
+        };
+        myJSON.Page = P_INDEX;
+        myJSON.Tag = Math.floor(Math.random() * 65536);
+        var table = document.getElementById("TablePump");
+        var row = element.parentNode.parentNode.rowIndex;
+        var Pump = Number(table.rows[row].cells[0].innerHTML);
+        var i = 0;
+        if (Cmd == Cmd_Next) {
+          for (i = Pump; i < 20; i++) {
+            if (myI2CDeviceDetailsPage & (1 << i)) break;
+          }
+          if (i == 20) {
+            for (i = 0; i < Pump; i++) {
+              if (myI2CDeviceDetailsPage & (1 << i)) break;
+            }
+          }
+          Pump = i + 1;
+        }
+        if (Cmd == Cmd_Rev) {
+          for (i = Pump - 2; i > -1; i--) {
+            if (myI2CDeviceDetailsPage & (1 << i)) break;
+          }
+          if (i == -1) {
+            for (i = 19; i > Pump - 2; i--) {
+              if (myI2CDeviceDetailsPage & (1 << i)) break;
+            }
+          }
+          Pump = i + 1;
+        }
+        myJSON.Voi = Pump;
+        //Gui lenh get data
+        var StrJSON = JSON.stringify(myJSON);
+        ws.send(StrJSON);
+        console.log("Send: ", StrJSON);
+        var BodyHtml = BodyDetail;
+        BodyHtml = BodyHtml.replace("{ten}", NamePump);
+        BodyHtml = BodyHtml.replace("{dia chi}", AddrPump);
+        document.getElementById("Body").innerHTML = BodyHtml;
+        //TablePump
+        var RowTt = pageDetailsTotalTrTd;
+        RowTt = RowTt.replace("{voi}", Pump);
+        document.getElementById("TablePump").innerHTML =
+          pageDetailsTotalTrTh + RowTt;
+        //TableFn
+        var RowFn = pageDetailsHistoryTrTd;
+        RowFn = RowFn.replace("{lan}", "0");
+        RowFn = RowFn.replace("{Mode}", "0");
+        RowFn = RowFn.replace("{Fn}", "Tìm kiếm");
+        RowFn += pageDetailsHistoryTrTd;
+        RowFn = RowFn.replace("{lan}", "1");
+        RowFn = RowFn.replace("{Mode}", "1");
+        RowFn = RowFn.replace("{Fn}", "Số liệu nhiều vòi");
+        RowFn += pageDetailsHistoryTrTd;
+        RowFn = RowFn.replace("{lan}", "2");
+        RowFn = RowFn.replace("{Mode}", "2");
+        RowFn = RowFn.replace("{Fn}", "Đổi thời gian tìm kiếm");
+        RowFn += pageDetailsHistoryTrTd;
+        RowFn = RowFn.replace("{lan}", "3");
+        RowFn = RowFn.replace("{Mode}", "3");
+        RowFn = RowFn.replace("{Fn}", "Đặt mật Khẩu");
+        RowFn += pageDetailsHistoryTrTd;
+        RowFn = RowFn.replace("{lan}", "4");
+        RowFn = RowFn.replace("{Fn}", "Khởi động lại");
+        document.getElementById("TableFn").innerHTML =
+          pageDetailsHistoryTrTh + RowFn;
+      }
+
+      var HOME_PAGE_PUMP = 0x01;
+      var HOME_PAGE_PROBE = 0x02;
+      var HOME_PAGE_CARD = 0x04;
+
+      function Homepage() {
+        pageHomeHandle = HOME_PAGE_HANDLE;
+        var BodyHtml = "";
+        var addBr = 0;
+        BodyHtml += beginTableHomePageHtml;
+
+        if (homePageType & HOME_PAGE_PUMP) {
+          if (1 == pumpHomeDisplay) {
+            BodyHtml += pumpTableHomePageHtml;
+            addBr++;
+          }
+        }
+
+        if (homePageType & HOME_PAGE_PROBE) {
+          if (1 == probeHomeDisplay) {
+            if (addBr > 0) {
+              BodyHtml += "<br>";
+            }
+            BodyHtml += probeTableHomePageHtml;
+            addBr++;
+          }
+        }
+
+        if (homePageType & HOME_PAGE_CARD) {
+          if (1 == readerHomeDisplay) {
+            if (addBr > 0) {
+              BodyHtml += "<br>";
+            }
+            BodyHtml += cardTableHomePageHtml;
+            addBr++;
+          }
+        }
+        BodyHtml += endTableHomePageHtml;
+
+        BodyHtml = BodyHtml.replace("{ten}", NamePump);
+        BodyHtml = BodyHtml.replace("{dia chi}", AddrPump);
+        document.getElementById("Body").innerHTML = BodyHtml;
+        var myJSON = {
+          WsCmd: "CM1",
+          Page: 1,
+          Date: "",
+          Tag: 1,
+        };
+        myJSON.Date = new Date().toString();
+        myJSON.Page = P_HOME;
+        myJSON.Tag = Math.floor(Math.random() * 65536);
+        //Gui lenh get data
+        var StrJSON = JSON.stringify(myJSON);
+        ws.send(StrJSON);
+
+        // Reset index homepage
+        myPumpDevice = 0;
+        myProbeDevice = 0;
+        myCardDevice = 0;
+        myI2CDeviceDetailsPage = 0;
+
+        var table = document.getElementById("TableInfo");
+        table.rows[1].cells[2].innerHTML = "Đang Kết Nối";
+        table.rows[1].cells[2].style.color = "#92D14F";
+      }
+
+      var TimeoutSocket = setTimeout(3000);
+
+      function SettingMode(element) {
+        var table = document.getElementById("TablePump");
+        //Lấy mã lệnh theo hàng
+        var Mode = element.parentNode.parentNode.rowIndex;
+        // var Pump = table.rows[1].cells[0].innerHTML;
+        if (Mode == 0) window.open("/param_log.htm");
+        if (Mode == 1) window.open("/pump_find_log.htm");
+        if (Mode == 2) window.open("/get?param_wifi=printpump&Pump=255");
+        if (Mode == 3) window.open("/pump_find_time_setting.htm");
+        if (Mode == 4) window.open("/auth.htm");
+        if (Mode == 5) Reload();
+      }
+
+      var CntClickM0 = 0;
+      var CntClickM1 = 0;
+      var CntClickM2 = 0;
+      var CntClickM3 = 0;
+      var CntClickM4 = 0;
+      var TimeoutM0 = setTimeout(function () {
+        CntClickM0 = 0;
+      }, 3000);
+      var TimeoutM1 = setTimeout(function () {
+        CntClickM1 = 0;
+      }, 3000);
+      var TimeoutM2 = setTimeout(function () {
+        CntClickM2 = 0;
+      }, 3000);
+      var TimeoutM3 = setTimeout(function () {
+        CntClickM3 = 0;
+      }, 3000);
+      var TimeoutM4 = setTimeout(function () {
+        CntClickM4 = 0;
+      }, 3000);
+
+      function SetCostFunction(element, Mode) {
+        if (Mode == 2) {
+          clearTimeout(TimeoutM2);
+          TimeoutM2 = setTimeout(function () {
+            CntClickM2 = 0;
+          }, 3000);
+          if (++CntClickM2 == 2) {
+            CntClickM2 = 0;
+            clearTimeout(TimeoutSocket);
+            var table = document.getElementById("TablePump");
+            var row = element.parentNode.rowIndex;
+            var Pump = Number(table.rows[row].cells[0].innerHTML);
+            var Pass = prompt("Please enter your pass");
+            if (Pass == null) return;
+            var myPass = {
+              Pass: "1234",
+            };
+            myPass.Pass = Pass;
+            var jsonPass = JSON.stringify(myPass);
+            console.log(jsonPass);
+            client.post("/post", "SetCost=" + jsonPass, function (response) {
+              console.log(response);
+              var obj = JSON.parse(response);
+              if (obj.St && obj.St == "Error") {
+                alert("Pass Error");
+                return;
+              }
+              var Cost = prompt("Nhập giá mới vòi " + Pump);
+              if (Cost == null) return;
+              var myCost = {
+                Pass: "1234",
+              };
+              myCost.Pass = Pass;
+              myCost.Pump = Number(Pump);
+              myCost.Cost = Number(Cost);
+              var jsonCost = JSON.stringify(myCost);
+              console.log(jsonCost);
+              client.post("/post", "SetCost=" + jsonCost, function (response) {
+                alert(response);
+              });
+            });
+          }
+        }
+      }
+
+      function HiddenFunction(Mode) {
+        if (Mode == 3) {
+          clearTimeout(TimeoutM3);
+          TimeoutM3 = setTimeout(function () {
+            CntClickM3 = 0;
+          }, 3000);
+          if (++CntClickM3 == 2) {
+            CntClickM3 = 0;
+            window.open("/costauth.htm");
+          }
+        }
+        if (Mode == 0) {
+          clearTimeout(TimeoutM1);
+          TimeoutM0 = setTimeout(function () {
+            CntClickM0 = 0;
+          }, 3000);
+          if (++CntClickM0 == 2) {
+            CntClickM0 = 0;
+            var table = document.getElementById("TablePump");
+            var Pump = table.rows[1].cells[0].innerHTML;
+            //window.open("/get?param_wifi=pu_info&Pump=" + Pump);
+            window.open("/get?param_wifi=pu_info&Pump=255");
+          }
+        }
+        if (Mode == 1 || Mode == 255) {
+          clearTimeout(TimeoutM1);
+          TimeoutM1 = setTimeout(function () {
+            CntClickM1 = 0;
+          }, 3000);
+          if (++CntClickM1 == 3) {
+            CntClickM1 = 0;
+            clearTimeout(TimeoutSocket);
+            var Pump;
+            var Cf = "";
+            if (Mode == 255) {
+              Pump = 255;
+              Cf = "Reset ALL";
+            } else {
+              var table = document.getElementById("TablePump");
+              Pump = table.rows[1].cells[0].innerHTML;
+              Cf = "Reset " + String(Pump);
+            }
+            if (confirm(Cf) == false) return;
+            client.get(
+              "/get?param_wifi=rst3pu&Pump=" + Pump,
+              function (response) {
+                alert(response);
+              }
+            );
+          }
+          console.log("CntClickM1: " + String(CntClickM1));
+        }
+        if (Mode == 4) {
+          clearTimeout(TimeoutM4);
+          TimeoutM4 = setTimeout(function () {
+            CntClickM4 = 0;
+          }, 3000);
+          if (++CntClickM4 == 2) {
+            CntClickM4 = 0;
+            clearTimeout(TimeoutSocket);
+            var table = document.getElementById("TablePump");
+            var Pump = table.rows[1].cells[0].innerHTML;
+            var Pass = prompt("Please enter pass to reset total1 pump " + Pump);
+            if (Pass == null) return;
+            client.get(
+              "/get?param_wifi=rsttt1&Pass=" + Pass + "&Pump=" + Pump,
+              function (response) {
+                console.log(response);
+                var obj = JSON.parse(response);
+                alert(obj.Mgs);
+              }
+            );
+          }
+        }
+      }
+
+      var ws = null;
+      var es = null; /* Event socket */
+
+      function startSocket(port) {
+        ws = new WebSocket("ws://" + document.location.host + "/ws", [
+          "arduino",
+        ]);
+        ws.onopen = function (e) {
+          console.log("Connected");
+          Homepage();
+        };
+        ws.onclose = function (e) {
+          console.log("Disconnected");
+          var table = document.getElementById("TableInfo");
+          table.rows[1].cells[2].innerHTML = "Đứt Kết Nối";
+          table.rows[1].cells[2].style.color = "red";
+          ws.close();
+          if (es != null) {
+            es.close();
+          }
+        };
+        ws.onerror = function (e) {
+          console.log("ws error", e);
+        };
+        ws.onmessage = function (e) {
+          console.log("Server: ", e.data);
+          var obj = JSON.parse(e.data);
+          if (obj.ST == "Err") {
+            alert(obj.Erm);
+            return;
+          }
+
+          clearTimeout(TimeoutSocket);
+
+          //Nếu là trang Detail
+          if (
+            obj.Page &&
+            obj.Page == P_INDEX &&
+            DETAIL_PAGE_HANDLE == pageHomeHandle
+          ) {
+            //Cập nhật lại trang Detail
+            if (myI2CDeviceDetailsPage != obj.I2CDeveice)
+              myI2CDeviceDetailsPage = obj.I2CDeveice;
+            //C1: Voi, C2: Kết nối, C3: Nhiên liệu, C4: Serial, C5: Tổng số tiền, C6: Tổng số lượng, C7: Tổng lần bán
+            if (obj.Total[0].C4 == 0) return;
+            var table = document.getElementById("TablePump");
+            table.rows[1].cells[0].innerHTML = obj.Total[0].C1;
+            //Trạng thái kết nối
+            if (obj.Total[0].C2 == 1)
+              table.rows[1].cells[1].children[0].className = "circleSoil";
+            else if (obj.Total[0].C2 == 2)
+              table.rows[1].cells[1].children[0].className = "redCircle";
+            else table.rows[1].cells[1].children[0].className = "circle";
+            //Nhiên liệu
+            var Nl = obj.Total[0].C3;
+            if (Nl == 0) {
+              table.rows[1].cells[2].innerHTML = "A92_II";
+              table.rows[1].cells[2].className = "cGreen";
+            } else if (Nl == 1) {
+              table.rows[1].cells[2].innerHTML = "A95_III";
+              table.rows[1].cells[2].className = "cBlue";
+            } else if (Nl == 2) {
+              table.rows[1].cells[2].innerHTML = "A95_IV";
+              table.rows[1].cells[2].className = "cBlue";
+            } else if (Nl == 3) {
+              table.rows[1].cells[2].innerHTML = "E5";
+              table.rows[1].cells[2].className = "cXanhLo";
+            } else if (Nl == 4) {
+              table.rows[1].cells[2].innerHTML = "DO";
+              table.rows[1].cells[2].className = "cOrange";
+            } else if (Nl == 5) {
+              table.rows[1].cells[2].innerHTML = "DO_II";
+              table.rows[1].cells[2].className = "cOrange";
+            } else if (Nl == 6) {
+              table.rows[1].cells[2].innerHTML = "KO";
+              table.rows[1].cells[2].className = "cTim";
+            } else if (Nl == 7) {
+              table.rows[1].cells[2].innerHTML = "DO_V";
+              table.rows[1].cells[2].className = "cOrange";
+            } else if (Nl == 8) {
+              table.rows[1].cells[2].innerHTML = "A95_V";
+              table.rows[1].cells[2].className = "cBlue";
+            } else if (Nl == 9) {
+              table.rows[1].cells[2].innerHTML = "A97_IV";
+              table.rows[1].cells[2].className = "cGreen";
+            } else if (Nl == 10) {
+              table.rows[1].cells[2].innerHTML = "A97_V";
+              table.rows[1].cells[2].className = "cGreen";
+            } else {
+              table.rows[1].cells[2].innerHTML = "Fail";
+              table.rows[1].cells[2].className = "cBlack";
+            }
+            table.rows[1].cells[3].innerHTML = obj.Total[0].C4;
+            table.rows[1].cells[4].innerHTML = cash_format(
+              Number(obj.Total[0].C5) / 1000,
+              ""
+            );
+            table.rows[1].cells[4].className = "cBlack";
+            table.rows[1].cells[5].innerHTML = volume_format(
+              Number(obj.Total[0].C6) / 1000,
+              ""
+            );
+
+            table.rows[1].cells[6].innerHTML = obj.Total[0].C7;
+            table.rows[1].cells[7].innerHTML =
+              '<p onclick="Details(this,2)"><</p>';
+
+            //Cập nhật các Fn vòi bơm
+            var i = 0;
+            var tableFn = document.getElementById("TableFn");
+            while (obj.Fn && obj.Fn[i]) {
+              var j = i + 1;
+              //C1: số hoá đơn, C2: ngày, C3: giờ, C4: số tiền, C5: số lượng, C6: đơn giá
+              var Date_num;
+              var Time_num;
+              var Cash_num;
+              var Volume_num;
+              var Cost_num;
+              if (Number(obj.Fn[i].C4) == 0) {
+                Date_num = 0;
+                Time_num = 0;
+                Cash_num = 0;
+                Volume_num = 0;
+                Cost_num = 0;
+              } else {
+                Date_num = Number(obj.Fn[i].C2);
+                Time_num = Number(obj.Fn[i].C3);
+                Cash_num = Number(obj.Fn[i].C4);
+                Volume_num = Number(obj.Fn[i].C5);
+                Cost_num = Number(obj.Fn[i].C6);
+              }
+              tableFn.rows[j].cells[1].innerHTML = obj.Fn[i].C1;
+
+              var mday, month, year;
+              var Date = Date_num;
+              mday = Math.floor(Date / 10000);
+              month = Math.floor((Date % 10000) / 100);
+              year = Date % 100;
+              var DateStr = "";
+              if (mday < 10) DateStr += "0";
+              DateStr += mday.toString() + "-";
+              if (month < 10) DateStr += "0";
+              DateStr += month.toString() + "-";
+              DateStr += "20";
+              if (year < 10) DateStr += "0";
+              DateStr += year.toString();
+              tableFn.rows[j].cells[2].innerHTML = DateStr;
+
+              var hour, min, sec;
+              var Time = Time_num;
+              hour = Math.floor(Time / 10000);
+              min = Math.floor((Time % 10000) / 100);
+              sec = Time % 100;
+              var TimeStr = "";
+              if (hour < 10) TimeStr += "0";
+              TimeStr += hour.toString() + ":";
+              if (min < 10) TimeStr += "0";
+              TimeStr += min.toString() + ":";
+              if (sec < 10) TimeStr += "0";
+              TimeStr += sec.toString();
+              tableFn.rows[j].cells[3].innerHTML = TimeStr;
+
+              tableFn.rows[j].cells[4].innerHTML = cash_format(
+                Cash_num / 1000,
+                ""
+              );
+              tableFn.rows[j].cells[5].innerHTML = volume_format(
+                Volume_num / 1000,
+                ""
+              );
+              tableFn.rows[j].cells[6].innerHTML = cash_format(
+                Cost_num / 1000,
+                ""
+              );
+              i++;
+            }
+          }
+
+          //Nếu là trang home
+          if (
+            obj.Page &&
+            obj.Page == P_HOME &&
+            HOME_PAGE_HANDLE == pageHomeHandle
+          ) {
+            TimeoutSocket = setTimeout(function () {
+              var tableto = document.getElementById("TableInfo");
+              tableto.rows[1].cells[2].innerHTML = "Đứt Kết Nối";
+              tableto.rows[1].cells[2].style.color = "red";
+              console.log("Home proactive disconnect");
+              ws.close();
+              if (es != null) {
+                es.close();
+              }
+            }, 8000);
+            var tableif = document.getElementById("TableInfo");
+            var connection_status = "Đang Kết Nối " + obj.socket_num;
+            tableif.rows[1].cells[2].innerHTML = connection_status;
+            tableif.rows[1].cells[2].style.color = "#92D14F";
+
+            var homeUpdate = 0;
+            if (obj.I2CDeveice) {
+              homeUpdate |= HOME_PAGE_PUMP;
+            }
+            if (obj.ProbeIndex) {
+              homeUpdate |= HOME_PAGE_PROBE;
+            }
+            if (obj.CardIndex) {
+              homeUpdate |= HOME_PAGE_CARD;
+            }
+
+            if (homePageType != homeUpdate) {
+              homePageType = homeUpdate;
+              console.log("homePageType = ", homePageType);
+              Homepage();
+            }
+
+            // Cập nhật lại trang home
+            if (myPumpDevice != obj.I2CDeveice) {
+              myPumpDevice = obj.I2CDeveice;
+              if (1 == pumpHomeDisplay) {
+                createPumpTable(myPumpDevice);
+              }
+            }
+
+            //Cập nhật lại trang probe
+            if (myProbeDevice != obj.ProbeIndex) {
+              myProbeDevice = obj.ProbeIndex;
+              if (1 == probeHomeDisplay) {
+                createProbeTable(myProbeDevice);
+              }
+            }
+
+            //Cập nhật lại trang card
+            if (myCardDevice != obj.CardIndex) {
+              myCardDevice = obj.CardIndex;
+              if (1 == readerHomeDisplay) {
+                if (myCardDevice != 0) {
+                  createCardHistoryTable(30);
+                }
+              }
+            }
+
+            //Cập nhật các số liệu vòi bơm
+            var i;
+            var table;
+            var rl;
+            if (myPumpDevice > 0 && 1 == pumpHomeDisplay) {
+              i = 0;
+              table = document.getElementById("TablePump");
+              rl = table.rows.length; // Số hàng table
+              while (obj.PumpArray && obj.PumpArray[i]) {
+                if (obj.PumpArray[i].C8 == "Line3") {
+                  i++;
+                  continue;
+                }
+
+                //Tim đúng vòi để update data
+                var j;
+                for (j = 1; j < rl; j++) {
+                  if (table.rows[j].cells[0].innerHTML == obj.PumpArray[i].C1)
+                    break;
+                }
+
+                //C1: Voi, C2: Kết nối, C3: Nhiên liệu, C4: Serial, C5: Trạng thái, C6: Số tiền, C7: Số lượng, C8: Đơn giá
+                table.rows[j].cells[0].innerHTML = obj.PumpArray[i].C1;
+                //Trạng thái kết nối
+                if (obj.PumpArray[i].C2 == 1)
+                  table.rows[j].cells[1].children[0].className = "circleSoil";
+                else if (obj.PumpArray[i].C2 == 2)
+                  table.rows[j].cells[1].children[0].className = "redCircle";
+                else table.rows[j].cells[1].children[0].className = "circle";
+                //Nhiên liệu
+                var Nl = obj.PumpArray[i].C3;
+                if (Nl == 0) {
+                  table.rows[j].cells[2].innerHTML = "A92_II";
+                  table.rows[j].cells[2].className = "cGreen";
+                } else if (Nl == 1) {
+                  table.rows[j].cells[2].innerHTML = "A95_III";
+                  table.rows[j].cells[2].className = "cBlue";
+                } else if (Nl == 2) {
+                  table.rows[j].cells[2].innerHTML = "A95_IV";
+                  table.rows[j].cells[2].className = "cBlue";
+                } else if (Nl == 3) {
+                  table.rows[j].cells[2].innerHTML = "E5";
+                  table.rows[j].cells[2].className = "cXanhLo";
+                } else if (Nl == 4) {
+                  table.rows[j].cells[2].innerHTML = "DO";
+                  table.rows[j].cells[2].className = "cOrange";
+                } else if (Nl == 5) {
+                  table.rows[j].cells[2].innerHTML = "DO_II";
+                  table.rows[j].cells[2].className = "cOrange";
+                } else if (Nl == 6) {
+                  table.rows[j].cells[2].innerHTML = "KO";
+                  table.rows[j].cells[2].className = "cTim";
+                } else if (Nl == 7) {
+                  table.rows[j].cells[2].innerHTML = "DO_V";
+                  table.rows[j].cells[2].className = "cOrange";
+                } else if (Nl == 8) {
+                  table.rows[j].cells[2].innerHTML = "A95_V";
+                  table.rows[j].cells[2].className = "cBlue";
+                } else if (Nl == 9) {
+                  table.rows[j].cells[2].innerHTML = "A97_IV";
+                  table.rows[j].cells[2].className = "cGreen";
+                } else if (Nl == 10) {
+                  table.rows[j].cells[2].innerHTML = "A97_V";
+                  table.rows[j].cells[2].className = "cGreen";
+                } else {
+                  table.rows[j].cells[2].innerHTML = "Fail";
+                  table.rows[j].cells[2].className = "cBlack";
+                }
+                //Serial number
+                table.rows[j].cells[3].innerHTML = obj.PumpArray[i].C4;
+
+                //Trạng thái cò
+                if (obj.PumpArray[i].C5) {
+                  table.rows[j].cells[4].innerHTML = "Đang bán";
+                  table.rows[j].cells[4].className = "cGreen";
+                } else {
+                  table.rows[j].cells[4].innerHTML = "Đang chờ";
+                  table.rows[j].cells[4].className = "cBlack";
+                }
+                //Số tiền
+                var Cast = obj.PumpArray[i].C6;
+                var Offset_col = 1;
+                //Đổi '.' -> ','
+                Cast = Cast.replace(/\./g, ",");
+                table.rows[j].cells[5 + Offset_col].innerHTML = Cast;
+                //Số lượng
+                if (obj.PumpArray[i].C5) {
+                  table.rows[j].cells[6 + Offset_col].innerHTML = volume_format(
+                    Number(obj.PumpArray[i].C7),
+                    ""
+                  );
+                } else
+                  table.rows[j].cells[6 + Offset_col].innerHTML =
+                    obj.PumpArray[i].C7;
+                //Đơn giá
+                var Cost = obj.PumpArray[i].C8;
+                //Đổi '.' -> ','
+                Cost = Cost.replace(/\./g, ",");
+                Cost = Cost.replace("L", "L ");
+                Cost = Cost.replace("d", "Đ ");
+                Cost = Cost.replace("C", "C ");
+                table.rows[j].cells[7 + Offset_col].innerHTML = Cost;
+                //>
+                //table.rows[j].cells[8].innerHTML = ">";
+                table.rows[j].cells[8 + Offset_col].className = "cXanhLo";
+
+                i++;
+              }
+            }
+
+            if (myProbeDevice > 0 && 1 == probeHomeDisplay) {
+              //Cập nhật các số liệu que đo
+              i = 0;
+              table = document.getElementById("TableProbe");
+              rl = table.rows.length; // Số hàng table
+              while (obj.ProbeArray && obj.ProbeArray[i]) {
+                //Tim đúng vòi để update data
+                var j;
+                for (j = 1; j < rl; j++) {
+                  if (table.rows[j].cells[0].innerHTML == obj.ProbeArray[i].C1)
+                    break;
+                }
+
+                // [ProbeArray] C1: Bồn, C2: Kết nối, C3: Nhiên liệu, C4: Dung Tích, C5: mm nhiên liệu, C6: Lít nhiên liệu, C7: mm nước, C8: Lít nước, C9: Nhiệt độ
+                table.rows[j].cells[0].innerHTML = obj.ProbeArray[i].C1;
+                //Trạng thái kết nối
+                if (obj.ProbeArray[i].C2)
+                  table.rows[j].cells[1].children[0].className = "circleSoil";
+                else table.rows[j].cells[1].children[0].className = "circle";
+                //Nhiên liệu
+                var Nl = obj.ProbeArray[i].C3;
+                if (Nl == 0) {
+                  table.rows[j].cells[2].innerHTML = "A92_II";
+                  table.rows[j].cells[2].className = "cGreen";
+                } else if (Nl == 1) {
+                  table.rows[j].cells[2].innerHTML = "A95_III";
+                  table.rows[j].cells[2].className = "cBlue";
+                } else if (Nl == 2) {
+                  table.rows[j].cells[2].innerHTML = "A95_IV";
+                  table.rows[j].cells[2].className = "cBlue";
+                } else if (Nl == 3) {
+                  table.rows[j].cells[2].innerHTML = "E5";
+                  table.rows[j].cells[2].className = "cXanhLo";
+                } else if (Nl == 4) {
+                  table.rows[j].cells[2].innerHTML = "DO";
+                  table.rows[j].cells[2].className = "cOrange";
+                } else if (Nl == 5) {
+                  table.rows[j].cells[2].innerHTML = "DO_II";
+                  table.rows[j].cells[2].className = "cOrange";
+                } else if (Nl == 6) {
+                  table.rows[j].cells[2].innerHTML = "KO";
+                  table.rows[j].cells[2].className = "cTim";
+                } else if (Nl == 7) {
+                  table.rows[j].cells[2].innerHTML = "DO_V";
+                  table.rows[j].cells[2].className = "cOrange";
+                } else if (Nl == 8) {
+                  table.rows[j].cells[2].innerHTML = "A95_V";
+                  table.rows[j].cells[2].className = "cBlue";
+                } else if (Nl == 9) {
+                  table.rows[j].cells[2].innerHTML = "A97_IV";
+                  table.rows[j].cells[2].className = "cGreen";
+                } else if (Nl == 10) {
+                  table.rows[j].cells[2].innerHTML = "A97_V";
+                  table.rows[j].cells[2].className = "cGreen";
+                } else {
+                  table.rows[j].cells[2].innerHTML = "Fail";
+                  table.rows[j].cells[2].className = "cBlack";
+                }
+                //Dung tích
+                table.rows[j].cells[3].innerHTML = probe_format(
+                  Number(obj.ProbeArray[i].C4) / 1,
+                  ""
+                );
+
+                //mm nhien lieu
+                table.rows[j].cells[4].innerHTML = obj.ProbeArray[i].C5;
+                //lit
+                table.rows[j].cells[5].innerHTML = probe_format(
+                  Number(obj.ProbeArray[i].C6) / 1,
+                  ""
+                );
+                //0-xanh lơ, 1-đỏ
+                if (obj.ProbeArray[i].C6_1 == 0) {
+                  table.rows[j].cells[5].className = "cXanhLo";
+                } else {
+                  table.rows[j].cells[5].className = "cRed";
+                }
+
+                //mm nuoc
+                table.rows[j].cells[6].innerHTML = obj.ProbeArray[i].C7;
+                //lit
+                table.rows[j].cells[7].innerHTML = probe_format(
+                  Number(obj.ProbeArray[i].C8) / 1,
+                  ""
+                );
+                //0-đen, 1-xanh lá
+                if (obj.ProbeArray[i].C8_1 == 0) {
+                  table.rows[j].cells[7].className = "cBlack";
+                } else {
+                  table.rows[j].cells[7].className = "cGreen";
+                }
+
+                table.rows[j].cells[8].innerHTML = obj.ProbeArray[i].C9;
+                //0-đen, 1-cam
+                if (obj.ProbeArray[i].C9_1 == 0) {
+                  table.rows[j].cells[8].className = "cBlack";
+                } else {
+                  table.rows[j].cells[8].className = "cOrange";
+                }
+
+                //>
+                //table.rows[j].cells[9].innerHTML = ">";
+                table.rows[j].cells[9].className = "cXanhLo";
+
+                i++;
+              }
+            }
+
+            if (myCardDevice != 0 && 1 == readerHomeDisplay) {
+              var table = document.getElementById("TableCard");
+              var i = 0;
+              while (obj.history && obj.history[i]) {
+                var r = i + 1;
+                if (obj.history[i].da != 0) {
+                  table.rows[r].cells[1].innerHTML = date_num2str_reader(
+                    Number(obj.history[i].da)
+                  );
+                  table.rows[r].cells[2].innerHTML = time_num2str(
+                    Number(obj.history[i].ti)
+                  );
+                  table.rows[r].cells[3].innerHTML = obj.history[i].lp;
+                  table.rows[r].cells[4].innerHTML = cash_format(
+                    Number(obj.history[i].ca) / 1000,
+                    ""
+                  );
+                  table.rows[r].cells[5].innerHTML = volume_format(
+                    Number(obj.history[i].vl) / 1000,
+                    ""
+                  );
+                  table.rows[r].cells[6].innerHTML = cash_format(
+                    Number(obj.history[i].co) / 1000,
+                    ""
+                  );
+                  table.rows[r].cells[7].innerHTML = obj.history[i].cp;
+                  table.rows[r].cells[8].innerHTML = obj.history[i].nt;
+                }
+                ++i;
+              }
+            }
+          }
+
+          //Update Time
+          if (obj.Date && obj.Time) {
+            document.getElementById("TableInfo").rows[0].cells[2].innerHTML =
+              obj.Date + " " + obj.Time + "";
+          }
+        };
+      }
+
+      var Df_CmdWCost = 10;
+      var Df_cmdWEncoder = 43;
+      /*
+        {"index":1, "data": 10, "pump":1}
+        */
+      function alertParamsChanged(e) {
+        var obj = JSON.parse(e);
+        var index = Number(obj.index);
+        var info;
+        if (Df_CmdWCost == index) {
+          info =
+            "Xem Thông Tin Thay Đổi Giá " +
+            obj.data +
+            " Đ\nTrụ Bơm " +
+            obj.pump;
+        } else if (Df_cmdWEncoder == index) {
+          info =
+            "Xem Thông Tin Mất Kết Nối Bộ Đếm Xung Lần " +
+            obj.data +
+            "\nTrụ Bơm " +
+            obj.pump;
+        }
+
+        var answer = confirm(info);
+        if (!answer) return;
+        window.open("/param_log.htm");
+      }
+
+      /*
+        "{"Error":1,"Msg":"The Nho"}"
+        */
+      var ERROR_SD_CARD = 1;
+
+      function alertSystemIssue(e) {
+        console.log(e);
+        var obj = JSON.parse(e);
+        var Error = Number(obj.Error);
+        if (ERROR_SD_CARD == Error) {
+          alert("================ Kiểm Tra Thẻ Nhớ ================");
+        } else {
+          alert("================ Kiểm Tra Hệ Thống ================");
+        }
+      }
+
+      function startEvents() {
+        es = new EventSource("/events");
+        es.onopen = function (e) {
+          console.log("Events Opened");
+        };
+        es.onclose = function (e) {
+          console.log("Events Closed");
+        };
+        es.onerror = function (e) {
+          if (e.target.readyState != EventSource.OPEN) {
+            console.log("Events error");
+          }
+        };
+        es.onmessage = function (e) {
+          console.log("Event: " + e.data);
+        };
+        es.addEventListener(
+          "params_changed",
+          function (e) {
+            alertParamsChanged(e.data);
+          },
+          false
+        );
+        es.addEventListener(
+          "System_alert",
+          function (e) {
+            alertSystemIssue(e.data);
+          },
+          false
+        );
+      }
+
+      function onBodyLoad() {
+        client.get("/get?param_wifi=device_info", function (response) {
+          console.log(response);
+          var obj = JSON.parse(response);
+          NamePump = obj.name;
+          AddrPump = obj.addr;
+          client.get(
+            "/get?param_wifi=home_display_option",
+            function (response1) {
+              console.log(response1);
+              var obj1 = JSON.parse(response1);
+              pumpHomeDisplay = obj1.pump;
+              probeHomeDisplay = obj1.probe;
+              readerHomeDisplay = obj1.reader;
+              startSocket();
+              startEvents();
+            }
+          );
+        });
+      }
+    </script>
+  </body>
+</html>

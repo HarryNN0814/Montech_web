@@ -1,0 +1,122 @@
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Cài Đặt Thời Gian Tìm Kiếm</title>
+    <script>
+        var HttpClient = function() {
+            this.get = function(aUrl, aCallback) {
+                var anHttpRequest = new XMLHttpRequest();
+                anHttpRequest.onreadystatechange = function() {
+                    if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                        aCallback(anHttpRequest.responseText);
+                }
+
+                anHttpRequest.open("GET", aUrl, true);
+                anHttpRequest.send(null);
+            }
+
+            this.post = function(aUrl, data, aCallback) {
+                var anHttpRequest = new XMLHttpRequest();
+                anHttpRequest.onreadystatechange = function() {
+                    if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                        aCallback(anHttpRequest.responseText);
+                }
+
+                anHttpRequest.open("POST", aUrl, true);
+                anHttpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                anHttpRequest.send(data);
+            }
+        }
+
+        var client = new HttpClient();
+
+        function updateTimeStampFind() {
+            var myJSON = {
+                "time1": [0, 0]
+            };
+            var table = document.getElementById('tableTimeStampFind');
+            myJSON.time1[0] = table.rows[0].cells[1].children[0].value;
+            myJSON.time1[1] = table.rows[1].cells[1].children[0].value;
+
+            var StrJSON = JSON.stringify(myJSON);
+            client.post('/postdata', "time_stamp=" + StrJSON, function(response) {
+                alert(response);
+            });
+        }
+
+        function onBodyLoad() {
+            client.get('/time_stamp_find.txt', function(response) {
+                console.log(response);
+                var obj = JSON.parse(response);
+                var table = document.getElementById('tableTimeStampFind');
+                var timeStart = obj.time1[0];
+                var timeStop = obj.time1[1];
+                var strTimeStart = "";
+                var strTimeStop = "";
+                var start_limit = 100000;
+                for (var i = 0; i < 5; i++) {
+                    if (timeStart < start_limit) {
+                        strTimeStart += '0';
+                    }
+                    if (timeStop < start_limit) {
+                        strTimeStop += '0';
+                    }
+                    start_limit /= 10;
+                }
+
+                strTimeStart += timeStart;
+                strTimeStop += timeStop;
+                table.rows[0].cells[1].children[0].value = strTimeStart;
+                table.rows[1].cells[1].children[0].value = strTimeStop;
+            });
+        }
+    </script>
+    <style>
+        div,
+        input {
+            padding: 5px;
+            font-size: 1em;
+        }
+        
+        input {
+            width: 100%;
+        }
+        
+        body {
+            text-align: center;
+            font-family: verdana;
+        }
+        
+        button {
+            border: 0;
+            border-radius: 0.3rem;
+            background-color: #4CAF50;
+            color: #fff;
+            line-height: 2.4rem;
+            font-size: 1.2rem;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body onload="onBodyLoad()">
+    <div style="text-align:left;display:inline-block;min-width:260px;">
+        <br><br><br><br><br>
+        <h3 align="center">Cài Đặt Thời Gian Tìm Kiếm</h3>
+        <table id="tableTimeStampFind" width="100%">
+            <tr>
+                <td align="left">Thời Gian Bắt Đầu (hhmmss)</td>
+                <td><input type="number" maxlength="6" size="6"></td>
+            </tr>
+            <tr>
+                <td align="left">Thời Gian Kết Thúc (hhmmss)</td>
+                <td><input type="number" maxlength="6" size="6"></td>
+            </tr>
+        </table>
+        <br><input type="button" value="Save" onclick="updateTimeStampFind()">
+    </div>
+</body>
+
+</html>

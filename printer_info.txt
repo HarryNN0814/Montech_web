@@ -1,0 +1,13 @@
+{
+"pInfo": "COT DO XANG DAU MONTECH
+Dc: 51-28 Tran Thi Trong,P.15
+Q.Tan Binh,Tp.Ho Chi Minh
+Dt: 0946990991
+Kieu: MONTECH-TATSUNO
+Ky Hieu: PDM 2502-2016\nKy Hieu Mau: MT2
+",
+    "pType": 1,
+    "pLang": 0,
+    "enable":1,
+    "version":1
+}
